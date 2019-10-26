@@ -1,3 +1,4 @@
+import Components.MediaList
 import Models.Media
 import react.dom.*
 import react.*
@@ -9,9 +10,9 @@ interface AppState: RState {
 class App : RComponent<RProps, AppState>() {
     override fun AppState.init() {
         availableItems = listOf(
-                Media("Heavy Trip", "DVD", "Spielfilm Komödie HEAV", 1),
-                Media("Pathfinder Rollenspiel Ausrüstungskompendium", "Buch", "GAMES Rollenspiele PATH", 1),
-                Media("Die Weltverbesserer", "Buch", "Gal 1 WELT", 1)
+                Media("Heavy Trip", "DVD", "Spielfilm Komödie HEAV", "https://www.buecherhallen.de/suchergebnis-detail/medium/T019895215.html", 1),
+                Media("Pathfinder Rollenspiel Ausrüstungskompendium", "Buch", "GAMES Rollenspiele PATH", "https://www.buecherhallen.de/suchergebnis-detail/medium/T019263328.html", 1),
+                Media("Die Weltverbesserer", "Buch", "Gal 1 WELT", "https://www.buecherhallen.de/suchergebnis-detail/medium/T017596504.html", 1)
         )
     }
 
@@ -24,13 +25,8 @@ class App : RComponent<RProps, AppState>() {
             h3 {
                 +"Verfügbare Medien"
             }
-            ul {
-                for (item in state.availableItems) {
-                    li {
-                        key = item.name
-                        +"${item.name}, ${item.type}, ${item.signature}, ${item.availability}"
-                    }
-                }
+            MediaList {
+                Medias = state.availableItems
             }
         }
     }
