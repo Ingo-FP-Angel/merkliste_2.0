@@ -2,24 +2,61 @@ import Components.MediaList
 import Models.Media
 import react.dom.*
 import react.*
+import org.w3c.dom.HTMLInputElement
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
-interface AppState: RState {
+interface AppState : RState {
+    var user: String
+    var pass: String
     var availableItems: List<Media>
 }
 
 class App : RComponent<RProps, AppState>() {
     override fun AppState.init() {
-        availableItems = listOf(
-                Media("Heavy Trip", "DVD", "Spielfilm Komödie HEAV", "https://www.buecherhallen.de/suchergebnis-detail/medium/T019895215.html", 1),
-                Media("Pathfinder Rollenspiel Ausrüstungskompendium", "Buch", "GAMES Rollenspiele PATH", "https://www.buecherhallen.de/suchergebnis-detail/medium/T019263328.html", 1),
-                Media("Die Weltverbesserer", "Buch", "Gal 1 WELT", "https://www.buecherhallen.de/suchergebnis-detail/medium/T017596504.html", 1)
-        )
+        user = ""
+        pass = ""
+        availableItems = listOf()
     }
 
     override fun RBuilder.render() {
-        // typesafe HTML goes here!
         h1 {
             +"Merkliste 2.0"
+        }
+        Form {
+            FormGroup {
+                Label {
+                    +"Username:"
+                }
+                Input {
+                    attrs.type = "text"
+                    attrs.onChange = {
+                        val target = it.target as HTMLInputElement
+                        setState {
+                            user = target.value
+                        }
+                    }
+                }
+                Label {
+                    +"Password:"
+                }
+                Input {
+                    attrs.type = "password"
+                    attrs.onChange = {
+                        val target = it.target as HTMLInputElement
+                        setState {
+                            pass = target.value
+                        }
+                    }
+                }
+                Button {
+                    attrs.color = "primary"
+                    attrs.onClick = {
+                        getMediaList()
+                    }
+                    +"Medien abrufen"
+                }
+            }
         }
         div {
             h3 {
@@ -27,6 +64,16 @@ class App : RComponent<RProps, AppState>() {
             }
             MediaList {
                 Medias = state.availableItems
+            }
+        }
+    }
+
+    fun getMediaList() {
+        val mainScope = MainScope()
+        mainScope.launch {
+            val medias = fetchAvailableMedias(state.user, state.pass)
+            setState {
+                availableItems = medias.toList()
             }
         }
     }
