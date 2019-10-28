@@ -6,10 +6,15 @@ import org.springframework.stereotype.Component
 
 @Component
 class BuecherhallenService(val webClient: WebClient) {
-     fun fetchAll(username: String, password: String): List<Media> {
+    fun fetchAll(username: String, password: String): List<Media> {
         webClient.login(username, password)
 
         val result: List<Media> = webClient.getAllMedias()
+
+        for (entry in result) {
+            val numberAvailable = webClient.getMediaDetails(entry.url)
+            entry.availability  = numberAvailable
+        }
 
         webClient.close()
 
