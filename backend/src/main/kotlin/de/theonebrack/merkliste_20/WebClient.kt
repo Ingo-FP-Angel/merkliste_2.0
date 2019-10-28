@@ -1,5 +1,6 @@
 package de.theonebrack.merkliste_20
 
+import de.theonebrack.merkliste_20.Config.MerklisteProperties
 import de.theonebrack.merkliste_20.Models.LoginFormData
 import de.theonebrack.merkliste_20.Models.Media
 import io.ktor.client.HttpClient
@@ -15,14 +16,16 @@ import io.ktor.content.TextContent
 import io.ktor.http.ContentType
 import kotlinx.coroutines.runBlocking
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
-class WebClient {
+class WebClient(val merklisteProperties: MerklisteProperties) {
     val logger = LoggerFactory.getLogger(WebClient::class.java)
-    val baseUrl: String = "https://www.buecherhallen.de"
+    val baseUrl: String = merklisteProperties.baseUrl
     val client: HttpClient = HttpClient(Apache) {
         engine {
             followRedirects = false
@@ -81,6 +84,41 @@ class WebClient {
             }
         }
         logger.info("Found ${result.size} entries")
+        return result
+    }
+
+    fun getMediaDetails(url: String): Int {
+        var result = -1
+        runBlocking {
+            logger.info("Fetching $url")
+
+            val detailsPage = client.get<String>("$baseUrl/$url")
+
+            Jsoup.parse(detailsPage).run {
+                val availableEntries = select("li.record-available")
+
+                result = getAvailabilityForLocation(availableEntries)
+
+                if (result == -1) {
+                    val unavailableEntries = select("li.record-not-available")
+
+                    result = getAvailabilityForLocation(unavailableEntries)
+                }
+            }
+        }
+        return result
+    }
+
+    private fun Document.getAvailabilityForLocation(availabilityPerLocationList: Elements): Int {
+        var result = -1
+        for (entry in availabilityPerLocationList) {
+            val location = selectFirst(".medium-availability-item-title-location").text()
+            if (location == "Zentralbibliothek") {
+                val availabilityString = selectFirst(".medium-availability-item-title-count").text()
+                result = availabilityString.split("/")[0].toInt()
+                break
+            }
+        }
         return result
     }
 

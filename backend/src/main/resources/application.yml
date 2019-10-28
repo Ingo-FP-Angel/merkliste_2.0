@@ -1,3 +1,6 @@
 logging:
   level:
     org.apache.http.wire: INFO
+
+merkliste:
+  baseUrl: https://www.buecherhallen.de
