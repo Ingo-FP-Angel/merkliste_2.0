@@ -17,7 +17,7 @@ fun RBuilder.MediaList(handler: MediaListProps.() -> Unit): ReactElement {
 class MediaList(props: MediaListProps): RComponent<MediaListProps, RState>() {
     override fun RBuilder.render() {
         ul {
-            for (item in props.Medias.sortedBy { it.name }) {
+            for (item in props.Medias.filter{ it.availability > 0}.sortedBy { it.name }) {
                 li {
                     div {
                         h3 {+"${item.name}"}
