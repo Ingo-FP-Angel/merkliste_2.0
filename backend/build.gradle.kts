@@ -103,6 +103,7 @@ tasks {
 /* Docker */
 val dockerBuildDirectory = "build/docker"
 val dockerImageWithVersion = "ingofpangel/$appName:${project.version}"
+val remoteDockerImageWithVersion = "docker.pkg.github.com/ingo-fp-angel/merkliste_2.0/$appName:${project.version}"
 task<Copy>("copyBackendJar") {
 	dependsOn("bootJar")
 	from("build/libs/${backendBaseName}-${project.version}.jar")
@@ -128,5 +129,6 @@ task<Exec>("buildDockerImage") {
 
 task<Exec>("pushDockerImage") {
 	dependsOn("buildDockerImage")
-	commandLine("docker", "push", dockerImageWithVersion)
+	commandLine("docker", "tag", dockerImageWithVersion, remoteDockerImageWithVersion)
+	commandLine("docker", "push", remoteDockerImageWithVersion)
 }
