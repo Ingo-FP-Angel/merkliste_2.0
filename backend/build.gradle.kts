@@ -59,3 +59,24 @@ tasks.withType<KotlinCompile> {
 		jvmTarget = "11"
 	}
 }
+
+tasks {
+	bootJar {
+		dependsOn("copyFrontEnd")
+	}
+	register("copyFrontEnd") {
+		dependsOn("buildFrontEnd")
+		doFirst {
+			println("Copy frontend build into resources")
+		}
+		finalizedBy("copyFrontEndFiles")
+	}
+	register<GradleBuild>("buildFrontEnd") {
+		tasks = listOf(":frontend:buildApplication")
+	}
+	register<Copy>("copyFrontEndFiles") {
+		from("../frontend/build/")
+		into("${buildDir}/resources/main/static/")
+	}
+}
+

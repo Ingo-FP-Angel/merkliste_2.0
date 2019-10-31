@@ -32,7 +32,7 @@ class DefaultController(
 
     @GetMapping("/api/media")
     fun get(@RequestParam username: String, @RequestParam password: String): List<Media> {
-        logger.info("User $username requested all available media")
+        logger.info("Incoming request for all available media")
         return buecherhallenService.fetchAll(username, password)
     }
 }

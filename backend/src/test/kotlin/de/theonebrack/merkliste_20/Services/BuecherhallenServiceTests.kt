@@ -2,11 +2,11 @@ package de.theonebrack.merkliste_20.Services
 
 import de.theonebrack.merkliste_20.Models.Media
 import de.theonebrack.merkliste_20.WebClient
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
-import kotlin.test.assertEquals
 
 class BuecherhallenServiceTests {
     val webClientMock = mock(WebClient::class.java)
