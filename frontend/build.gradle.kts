@@ -4,6 +4,6 @@ plugins {
 
 tasks {
     register<GradleBuild>("buildApplication") {
-        tasks = listOf("yarn_build")
+        tasks = listOf("yarn_install", "yarn_build")
     }
 }
