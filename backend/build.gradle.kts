@@ -127,8 +127,12 @@ task<Exec>("buildDockerImage") {
 	commandLine("docker", "build", "-t", dockerImageWithVersion, ".")
 }
 
-task<Exec>("pushDockerImage") {
+task<Exec>("tagDockerImage") {
 	dependsOn("buildDockerImage")
 	commandLine("docker", "tag", dockerImageWithVersion, remoteDockerImageWithVersion)
+}
+
+task<Exec>("pushDockerImage") {
+	dependsOn("tagDockerImage")
 	commandLine("docker", "push", remoteDockerImageWithVersion)
 }
