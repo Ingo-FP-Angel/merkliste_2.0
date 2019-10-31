@@ -1,3 +1,7 @@
+spring:
+  application:
+    name: Merkliste_2.0
+
 logging:
   level:
     org.apache.http.wire: INFO

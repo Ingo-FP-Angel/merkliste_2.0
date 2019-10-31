@@ -1,3 +1,5 @@
+import java.nio.charset.StandardCharsets
+import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val ktor_version = "1.2.4"
@@ -11,8 +13,9 @@ plugins {
 	kotlin("plugin.spring") version "1.3.50"
 }
 
-group = "de.the-one-brack"
-version = "0.0.1-SNAPSHOT"
+val appName = "merkliste_20"
+group = "de.the-one-brack.$appName"
+version = File("${project.projectDir}/..", "version").readText(StandardCharsets.UTF_8).trim()
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -60,8 +63,25 @@ tasks.withType<KotlinCompile> {
 	}
 }
 
+val backendBaseName = (project.group as String) + ".backend"
+springBoot {
+	buildInfo {
+		properties {
+			artifact = backendBaseName
+			version = project.version as String
+			group = project.group as String
+			name = backendBaseName
+		}
+	}
+}
+
 tasks {
 	bootJar {
+		archiveBaseName.set(backendBaseName)
+		manifest {
+			attributes("Implementation-Title" to backendBaseName)
+			attributes("Implementation-Version" to project.version)
+		}
 		dependsOn("copyFrontEnd")
 	}
 	register("copyFrontEnd") {
@@ -80,3 +100,33 @@ tasks {
 	}
 }
 
+/* Docker */
+val dockerBuildDirectory = "build/docker"
+val dockerImageWithVersion = "ingofpangel/$appName:${project.version}"
+task<Copy>("copyBackendJar") {
+	dependsOn("bootJar")
+	from("build/libs/${backendBaseName}-${project.version}.jar")
+	into(dockerBuildDirectory)
+}
+
+task<Copy>("copyDockerfiles") {
+	from("src/main/docker/")
+	from("..") {
+		include("version")
+	}
+	into(dockerBuildDirectory)
+	filter<ReplaceTokens>("tokens" to mapOf(
+			"backendArtifactName" to "${backendBaseName}-${project.version}.jar"
+	))
+}
+
+task<Exec>("buildDockerImage") {
+	dependsOn("copyBackendJar", "copyDockerfiles")
+	workingDir(dockerBuildDirectory)
+	commandLine("docker", "build", "-t", dockerImageWithVersion, ".")
+}
+
+task<Exec>("pushDockerImage") {
+	dependsOn("buildDockerImage")
+	commandLine("docker", "push", dockerImageWithVersion)
+}
