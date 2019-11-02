@@ -12,6 +12,7 @@ interface AppState : RState {
     var pass: String
     var availableItems: List<Media>
     var isLoading: Boolean
+    var errorMessage: String
 }
 
 class App : RComponent<RProps, AppState>() {
@@ -20,6 +21,7 @@ class App : RComponent<RProps, AppState>() {
         pass = ""
         availableItems = listOf()
         isLoading = false
+        errorMessage = ""
     }
 
     override fun RBuilder.render() {
@@ -71,6 +73,9 @@ class App : RComponent<RProps, AppState>() {
                 }
             }
         }
+        if (!state.errorMessage.isNullOrEmpty()) {
+            p { +"${state.errorMessage}" }
+        }
         div {
             h3 {
                 +"Verfügbare Medien"
@@ -85,6 +90,7 @@ class App : RComponent<RProps, AppState>() {
     fun getMediaList() {
         setState {
             isLoading = true
+            errorMessage = ""
             availableItems = listOf()
         }
         val mainScope = MainScope()
@@ -95,8 +101,10 @@ class App : RComponent<RProps, AppState>() {
                     isLoading = false
                     availableItems = medias.toList()
                 }
-            } catch (ex: Exception) {
-                console.log(ex)
+            } catch (err: Error) {
+                setState {
+                    errorMessage = err.message ?: "Fehler beim Abrufen"
+                }
             } finally {
                 setState {
                     isLoading = false
