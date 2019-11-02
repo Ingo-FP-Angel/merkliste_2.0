@@ -31,7 +31,7 @@ class App : RComponent<RProps, AppState>() {
         Form {
             FormGroup {
                 Label {
-                    +"Username:"
+                    +"Nummer der Kundenkarte:"
                 }
                 Input {
                     attrs.type = "text"
@@ -43,7 +43,7 @@ class App : RComponent<RProps, AppState>() {
                     }
                 }
                 Label {
-                    +"Password:"
+                    +"Passwort:"
                 }
                 Input {
                     attrs.type = "password"

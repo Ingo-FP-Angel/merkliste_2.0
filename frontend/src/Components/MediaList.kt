@@ -18,7 +18,7 @@ fun RBuilder.MediaList(handler: MediaListProps.() -> Unit): ReactElement {
 class MediaList(props: MediaListProps) : RComponent<MediaListProps, RState>() {
     override fun RBuilder.render() {
         if (props.isLoading) {
-            p { +"Merkliste wird abgerufen" }
+            p { +"Merkliste wird abgerufen. Dies dauert etwa eine Sekunde pro Merklisteneintrag." }
         } else if (props.Medias.size == 0) {
             p { +"Merkliste leer oder noch nicht abgerufen" }
         } else {
