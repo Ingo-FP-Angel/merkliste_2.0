@@ -4,8 +4,9 @@ import Models.Media
 import react.*
 import react.dom.*
 
-interface MediaListProps: RProps {
+interface MediaListProps : RProps {
     var Medias: List<Media>
+    var isLoading: Boolean
 }
 
 fun RBuilder.MediaList(handler: MediaListProps.() -> Unit): ReactElement {
@@ -14,16 +15,22 @@ fun RBuilder.MediaList(handler: MediaListProps.() -> Unit): ReactElement {
     }
 }
 
-class MediaList(props: MediaListProps): RComponent<MediaListProps, RState>() {
+class MediaList(props: MediaListProps) : RComponent<MediaListProps, RState>() {
     override fun RBuilder.render() {
-        ul {
-            for (item in props.Medias.filter{ it.availability > 0}.sortedBy { it.name }) {
-                li {
-                    div {
-                        h3 {+"${item.name}"}
-                        p {+"${item.type}"}
-                        p {+"${item.signature}"}
-                        p {+"Anzahl: ${item.availability}"}
+        if (props.isLoading) {
+            p { +"Merkliste wird abgerufen" }
+        } else if (props.Medias.size == 0) {
+            p { +"Merkliste leer oder noch nicht abgerufen" }
+        } else {
+            ul {
+                for (item in props.Medias.filter { it.availability > 0 }.sortedBy { it.name }) {
+                    li {
+                        div {
+                            h3 { +"${item.name}" }
+                            p { +"${item.type}" }
+                            p { +"${item.signature}" }
+                            p { +"Anzahl: ${item.availability}" }
+                        }
                     }
                 }
             }

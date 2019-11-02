@@ -16,7 +16,7 @@ external val Label: RClass<dynamic>
 @JsName("Input")
 external val Input: RClass<InputProps>
 
-external interface InputProps : RProps {
+external interface InputProps: RProps {
     var onChange: ((Event) -> dynamic)?
     var type: String
 }
@@ -24,7 +24,19 @@ external interface InputProps : RProps {
 @JsName("Button")
 external val Button: RClass<ButtonProps>
 
-external interface ButtonProps : RProps {
+external interface ButtonProps: RProps {
     var color: String? get() = definedExternally; set(value) = definedExternally
+    var disabled: Boolean? get() = definedExternally; set(value) = definedExternally
     var onClick: (Event) -> Unit
 }
+
+@JsName("Spinner")
+external val Spinner: RClass<SpinnerProps>
+
+external interface SpinnerProps: RProps {
+    var children: String? get() = definedExternally; set(value) = definedExternally
+    var color: String? get() = definedExternally; set(value) = definedExternally
+    var size: String? get() = definedExternally; set(value) = definedExternally
+    var type: String? get() = definedExternally; set(value) = definedExternally
+}
+
