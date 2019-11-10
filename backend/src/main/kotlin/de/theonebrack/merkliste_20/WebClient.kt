@@ -6,6 +6,7 @@ import de.theonebrack.merkliste_20.Models.Media
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.BrowserUserAgent
+import io.ktor.client.features.RedirectResponseException
 import io.ktor.client.features.cookies.AcceptAllCookiesStorage
 import io.ktor.client.features.cookies.HttpCookies
 import io.ktor.client.request.get
@@ -21,7 +22,9 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.jsoup.select.Selector
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import org.springframework.web.server.ResponseStatusException
 
 @Component
 class WebClient(val merklisteProperties: MerklisteProperties) {
@@ -55,10 +58,25 @@ class WebClient(val merklisteProperties: MerklisteProperties) {
                 )
 
                 logger.info("Post login form")
-                client.post<Any> {
-                    url("$baseUrl/login.html")
-                    header("Referer", "$baseUrl/login.html")
-                    body = TextContent(loginData.toString(), contentType = ContentType.Application.FormUrlEncoded)
+                try {
+                    val loginResult = client.post<String> {
+                        url("$baseUrl/login.html")
+                        header("Referer", "$baseUrl/login.html")
+                        body = TextContent(loginData.toString(), contentType = ContentType.Application.FormUrlEncoded)
+                    }
+                    logger.debug("Login result")
+                    logger.debug(loginResult)
+                } catch (ex: RedirectResponseException) {
+                    val response = ex.response
+                    if (response.headers["Location"] == "$baseUrl/login.html") {
+                        val loginPageWithReason = client.get<String>("$baseUrl/login.html")
+                        Jsoup.parse(loginPageWithReason).run {
+                            val form: Element = selectFirst("#tl_login")
+                            val reason = form.getElementsByClass("error").first().text()
+                            logger.error("Login failed: $reason")
+                            throw ResponseStatusException(HttpStatus.BAD_GATEWAY, "Login bei buecherhalle.de fehlgeschlagen: $reason")
+                        }
+                    }
                 }
             }
         }
@@ -79,7 +97,7 @@ class WebClient(val merklisteProperties: MerklisteProperties) {
                             type = it.select(".search-results-media-type-text").text(),
                             signature = it.select(".search-results-details-signatur").text(),
                             url = it.select("h2>a").attr("href"),
-                            availability = -1 // ToDo: get availability from details pages later
+                            availability = -1
                     )
                 }
             }

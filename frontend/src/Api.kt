@@ -15,12 +15,14 @@ suspend fun fetchAvailableMedias(user: String, pass: String, location: String): 
             }
     )
     val response = responsePromise.await()
+    val json = response.json().await()
 
     if (!response.ok) {
-        throw Error("Abrufen fehlgeschlagen mit Status Code ${response.status} und Hinweis ${response.text().await()}")
+        val errorResponse = json.unsafeCast<ErrorResponse>()
+        throw Error("Abrufen fehlgeschlagen mit Status Code '${errorResponse.status} ${errorResponse.error}' und Hinweis '${errorResponse.message}'")
     }
 
-    val jsonPromise = response.json()
-    val json = jsonPromise.await()
     return json.unsafeCast<Array<Media>>()
 }
+
+data class ErrorResponse(val timestamp: String, val status: Int, val error: String, val message: String, val path: String)
