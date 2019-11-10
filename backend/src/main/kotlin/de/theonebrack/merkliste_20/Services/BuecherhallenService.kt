@@ -6,14 +6,14 @@ import org.springframework.stereotype.Component
 
 @Component
 class BuecherhallenService(val webClient: WebClient) {
-    fun fetchAll(username: String, password: String): List<Media> {
+    fun fetchAll(username: String, password: String, location: String?): List<Media> {
         webClient.login(username, password)
 
         val result: List<Media> = webClient.getAllMedias()
 
         for (entry in result) {
-            val numberAvailable = webClient.getMediaDetails(entry.url)
-            entry.availability  = numberAvailable
+            val numberAvailable = if (location.isNullOrEmpty()) webClient.getMediaDetails(entry.url) else webClient.getMediaDetails(entry.url, location)
+            entry.availability = numberAvailable
         }
 
         webClient.close()

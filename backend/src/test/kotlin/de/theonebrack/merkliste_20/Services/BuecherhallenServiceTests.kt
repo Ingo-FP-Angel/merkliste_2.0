@@ -17,7 +17,20 @@ class BuecherhallenServiceTests {
         Mockito.`when`(webClientMock.getAllMedias()).thenReturn(listOf(Media("Test", "Buch", "Foo", "details.html", -1)))
         Mockito.`when`(webClientMock.getMediaDetails("details.html")).thenReturn(2)
 
-        val result = cut.fetchAll("foo", "bar")
+        val result = cut.fetchAll("foo", "bar", null)
+
+        verify(webClientMock).login("foo", "bar")
+        assertEquals(1, result.size)
+        assertEquals(2, result[0].availability)
+    }
+
+    @Test
+    fun whenDifferentLocationIsGiven_thenPassLocationToWebClient() {
+        val cut = BuecherhallenService(webClientMock)
+        Mockito.`when`(webClientMock.getAllMedias()).thenReturn(listOf(Media("Test", "Buch", "Foo", "details.html", -1)))
+        Mockito.`when`(webClientMock.getMediaDetails("details.html", "Niendorf")).thenReturn(2)
+
+        val result = cut.fetchAll("foo", "bar", "Niendorf")
 
         verify(webClientMock).login("foo", "bar")
         assertEquals(1, result.size)
