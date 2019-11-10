@@ -1,4 +1,6 @@
+import Components.LocationSelect
 import Components.MediaList
+import ExternalTypes.*
 import Models.Media
 import react.dom.*
 import react.*
@@ -10,6 +12,7 @@ import kotlinx.coroutines.launch
 interface AppState : RState {
     var user: String
     var pass: String
+    var location: String
     var availableItems: List<Media>
     var isLoading: Boolean
     var errorMessage: String
@@ -19,6 +22,7 @@ class App : RComponent<RProps, AppState>() {
     override fun AppState.init() {
         user = ""
         pass = ""
+        location = "Zentralbibliothek"
         availableItems = listOf()
         isLoading = false
         errorMessage = ""
@@ -51,6 +55,14 @@ class App : RComponent<RProps, AppState>() {
                         val target = it.target as HTMLInputElement
                         setState {
                             pass = target.value
+                        }
+                    }
+                }
+                LocationSelect {
+                    location = state.location
+                    onSelect = { value ->
+                        setState {
+                            location = value
                         }
                     }
                 }
@@ -96,7 +108,7 @@ class App : RComponent<RProps, AppState>() {
         val mainScope = MainScope()
         mainScope.launch {
             try {
-                val medias = fetchAvailableMedias(state.user, state.pass)
+                val medias = fetchAvailableMedias(state.user, state.pass, state.location)
                 setState {
                     isLoading = false
                     availableItems = medias.toList()

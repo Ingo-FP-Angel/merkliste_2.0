@@ -1,5 +1,7 @@
 @file:JsModule("reactstrap")
 
+package ExternalTypes
+
 import org.w3c.dom.events.Event
 import kotlin.js.*
 import react.*
@@ -19,6 +21,7 @@ external val Input: RClass<InputProps>
 external interface InputProps: RProps {
     var onChange: ((Event) -> dynamic)?
     var type: String
+    var value: String?
 }
 
 @JsName("Button")

@@ -6,9 +6,9 @@ import Models.Media
 
 external val process: dynamic
 
-suspend fun fetchAvailableMedias(user: String, pass: String): Array<Media> {
+suspend fun fetchAvailableMedias(user: String, pass: String, location: String): Array<Media> {
     val backendBaseUrl = if (process.env.NODE_ENV == "production") "/api" else "http://localhost:8080/api"
-    val responsePromise = window.fetch("$backendBaseUrl/media",
+    val responsePromise = window.fetch("$backendBaseUrl/media?location=$location",
             object: RequestInit {
                 override var method: String? = "GET"
                 override var headers: dynamic = json("username" to user, "password" to pass)
