@@ -60,4 +60,24 @@ class WebClientTests {
 
         Assertions.assertEquals(-1, availability)
     }
+
+    @Test
+    fun whenGettingDetailsWithoutLocation_UseZentralbibliothek() {
+        val props = MerklisteProperties("http://localhost:32140")
+
+        val cut = WebClient(props)
+        val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T018915385.html")
+
+        Assertions.assertEquals(1, availability)
+    }
+
+    @Test
+    fun whenGettingDetailsForNiendorf_FindUnavailable() {
+        val props = MerklisteProperties("http://localhost:32140")
+
+        val cut = WebClient(props)
+        val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T018915385.html", "Niendorf")
+
+        Assertions.assertEquals(0, availability)
+    }
 }

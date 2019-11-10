@@ -19,6 +19,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
+import org.jsoup.select.Selector
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
@@ -87,7 +88,7 @@ class WebClient(val merklisteProperties: MerklisteProperties) {
         return result
     }
 
-    fun getMediaDetails(url: String): Int {
+    fun getMediaDetails(url: String, location: String = "Zentralbibliothek"): Int {
         var result = -1
         runBlocking {
             logger.info("Fetching $url")
@@ -97,24 +98,24 @@ class WebClient(val merklisteProperties: MerklisteProperties) {
             Jsoup.parse(detailsPage).run {
                 val availableEntries = select("li.record-available")
 
-                result = getAvailabilityForLocation(availableEntries)
+                result = getAvailabilityForLocation(availableEntries, location)
 
                 if (result == -1) {
                     val unavailableEntries = select("li.record-not-available")
 
-                    result = getAvailabilityForLocation(unavailableEntries)
+                    result = getAvailabilityForLocation(unavailableEntries, location)
                 }
             }
         }
         return result
     }
 
-    private fun Document.getAvailabilityForLocation(availabilityPerLocationList: Elements): Int {
+    private fun Document.getAvailabilityForLocation(availabilityPerLocationList: Elements, location: String): Int {
         var result = -1
         for (entry in availabilityPerLocationList) {
-            val location = selectFirst(".medium-availability-item-title-location").text()
-            if (location == "Zentralbibliothek") {
-                val availabilityString = selectFirst(".medium-availability-item-title-count").text()
+            val locationOfAvailability = Selector.selectFirst(".medium-availability-item-title-location", entry).text()
+            if (locationOfAvailability == location) {
+                val availabilityString = Selector.selectFirst(".medium-availability-item-title-count", entry).text()
                 result = availabilityString.split("/")[0].toInt()
                 break
             }
