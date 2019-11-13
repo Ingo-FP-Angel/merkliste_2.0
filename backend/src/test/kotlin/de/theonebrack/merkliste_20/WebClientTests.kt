@@ -5,10 +5,12 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import de.theonebrack.merkliste_20.Config.MerklisteProperties
 import org.junit.jupiter.api.*
+import org.springframework.web.server.ResponseStatusException
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class WebClientTests {
     private var wiremock: WireMockServer? = null
+    private val props: MerklisteProperties = MerklisteProperties("http://localhost:32140")
 
     @BeforeAll
     fun setupWireMock() {
@@ -24,6 +26,9 @@ class WebClientTests {
         stubFor(get(urlEqualTo("/suchergebnis-detail/medium/T008488736.html")).willReturn(aResponse()
                 .withBodyFile("HdR.html")
         ))
+        stubFor(get(urlEqualTo("/suchergebnis-detail/medium/AvailabilityInfoUnavailable.html")).willReturn(aResponse()
+                .withBodyFile("AvailabilityInfoUnavailable.html")
+        ))
     }
 
     @AfterAll
@@ -33,8 +38,6 @@ class WebClientTests {
 
     @Test
     fun whenGettingDetails_FindAvailable() {
-        val props = MerklisteProperties("http://localhost:32140")
-
         val cut = WebClient(props)
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T018915385.html")
 
@@ -43,8 +46,6 @@ class WebClientTests {
 
     @Test
     fun whenGettingDetails_FindUnavailable() {
-        val props = MerklisteProperties("http://localhost:32140")
-
         val cut = WebClient(props)
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T019497569.html")
 
@@ -53,8 +54,6 @@ class WebClientTests {
 
     @Test
     fun whenGettingDetails_NotFound() {
-        val props = MerklisteProperties("http://localhost:32140")
-
         val cut = WebClient(props)
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T008488736.html")
 
@@ -63,8 +62,6 @@ class WebClientTests {
 
     @Test
     fun whenGettingDetailsWithoutLocation_UseZentralbibliothek() {
-        val props = MerklisteProperties("http://localhost:32140")
-
         val cut = WebClient(props)
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T018915385.html")
 
@@ -73,11 +70,19 @@ class WebClientTests {
 
     @Test
     fun whenGettingDetailsForNiendorf_FindUnavailable() {
-        val props = MerklisteProperties("http://localhost:32140")
-
         val cut = WebClient(props)
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T018915385.html", "Niendorf")
 
         Assertions.assertEquals(0, availability)
+    }
+
+    @Test
+    fun whenGettingDetailsAndAvailabilityInfoUnavailable_Throw() {
+        val cut = WebClient(props)
+
+        val ex = Assertions.assertThrows(ResponseStatusException::class.java) {
+            cut.getMediaDetails("suchergebnis-detail/medium/AvailabilityInfoUnavailable.html")
+        }
+        Assertions.assertTrue(ex.message.contains("Es sind zur Zeit keine Daten zur Verfügbarkeit abrufbar. Bitte wenden Sie sich an das Bibliothekspersonal."))
     }
 }

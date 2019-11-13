@@ -114,18 +114,28 @@ class WebClient(val merklisteProperties: MerklisteProperties) {
             val detailsPage = client.get<String>("$baseUrl/$url")
 
             Jsoup.parse(detailsPage).run {
-                val availableEntries = select("li.record-available")
+                val availabilityErrorMessage =  select(".availability-message")
+                checkAvailabilityErrorMessage(availabilityErrorMessage)
 
+                val availableEntries = select("li.record-available")
                 result = getAvailabilityForLocation(availableEntries, location)
 
                 if (result == -1) {
                     val unavailableEntries = select("li.record-not-available")
-
                     result = getAvailabilityForLocation(unavailableEntries, location)
                 }
             }
         }
         return result
+    }
+
+    private fun checkAvailabilityErrorMessage(availabilityErrorMessage: Elements?) {
+        if ((availabilityErrorMessage?.size ?: 0) == 0 ) {
+            return
+        }
+
+        val reason = availabilityErrorMessage!![0].text()
+        throw ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Abrufen der Verfügbarkeit bei buecherhalle.de fehlgeschlagen: $reason")
     }
 
     private fun Document.getAvailabilityForLocation(availabilityPerLocationList: Elements, location: String): Int {
