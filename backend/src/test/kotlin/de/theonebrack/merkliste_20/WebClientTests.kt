@@ -1,10 +1,10 @@
 package de.theonebrack.merkliste_20
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import de.theonebrack.merkliste_20.Config.MerklisteProperties
 import org.junit.jupiter.api.*
+import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -34,6 +34,33 @@ class WebClientTests {
     @AfterAll
     fun tearDown() {
         wiremock?.stop()
+    }
+
+    @Test
+    fun whenLoginAndRedirectToItself_ThrowWithLoginErrorMessage() {
+        stubFor(get(urlEqualTo("/login.html"))
+                .withCookie("PHPSESSID", notMatching("4af537c3431cb512e70afd295d7fda1a"))
+                .willReturn(aResponse()
+                .withBodyFile("login.html")
+        ))
+        stubFor(post(urlEqualTo("/login.html"))
+                .willReturn(aResponse()
+                .withStatus(HttpStatus.SEE_OTHER.value())
+                .withHeader("Location", "http://localhost:32140/login.html")
+                .withHeader("Set-Cookie", "PHPSESSID=4af537c3431cb512e70afd295d7fda1a; path=/")
+        ))
+        stubFor(get(urlEqualTo("/login.html"))
+                .withCookie("PHPSESSID", matching("4af537c3431cb512e70afd295d7fda1a"))
+                .willReturn(aResponse()
+                .withBodyFile("LoginFailedMaintenance.html")
+        ))
+
+        val cut = WebClient(props)
+
+        val ex = Assertions.assertThrows(ResponseStatusException::class.java) {
+            cut.login("user", "pass")
+        }
+        Assertions.assertTrue(ex.message.contains("Anmeldung nicht möglich! Der Authentifizierungsdienst steht zur Zeit nicht zur Verfügung."))
     }
 
     @Test
