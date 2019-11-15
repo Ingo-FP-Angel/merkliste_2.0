@@ -2,12 +2,11 @@ package de.theonebrack.merkliste_20.Services
 
 import de.theonebrack.merkliste_20.Models.Media
 import de.theonebrack.merkliste_20.WebClient
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import org.mockito.Mockito.*
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 
 class BuecherhallenServiceTests {
     val webClientMock = mock(WebClient::class.java)
@@ -39,7 +38,7 @@ class BuecherhallenServiceTests {
     }
 
     @Test
-    fun whenDetailsCallThrows_thenSkipRemainingDetailsCalls() {
+    fun whenDetailsCallThrows_thenSetSpecialAvailabilityAndContinue() {
         val cut = BuecherhallenService(webClientMock)
         Mockito.`when`(webClientMock.getAllMedias()).thenReturn(listOf(
                 Media("Test", "Buch", "Foo", "fail.html", -1),
@@ -49,10 +48,10 @@ class BuecherhallenServiceTests {
         Mockito.`when`(webClientMock.getMediaDetails("fail.html")).thenThrow(exceptionOnDetailsPage)
         Mockito.`when`(webClientMock.getMediaDetails("details.html")).thenReturn(2)
 
-        val ex = Assertions.assertThrows(Error::class.java) {
-            cut.fetchAll("foo", "bar", null)
-        }
-        assertSame(exceptionOnDetailsPage, ex)
-        verify(webClientMock, times(1)).getMediaDetails(anyString(), anyString())
+        val result = cut.fetchAll("foo", "bar", null)
+        assertEquals(2, result.size)
+        assertEquals(-3, result[0].availability)
+        assertEquals(2, result[1].availability)
+
     }
 }

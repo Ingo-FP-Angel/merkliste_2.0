@@ -28,7 +28,7 @@ import org.springframework.web.server.ResponseStatusException
 
 @Component
 class WebClient(val merklisteProperties: MerklisteProperties) {
-    val logger = LoggerFactory.getLogger(WebClient::class.java)
+    val logger = LoggerFactory.getLogger(javaClass)
     val baseUrl: String = merklisteProperties.baseUrl
     val client: HttpClient = HttpClient(Apache) {
         engine {
@@ -115,10 +115,14 @@ class WebClient(val merklisteProperties: MerklisteProperties) {
 
             Jsoup.parse(detailsPage).run {
                 val availabilityErrorMessage =  select(".availability-message")
-                checkAvailabilityErrorMessage(availabilityErrorMessage)
+                if (availabilityErrorMessagePresent(availabilityErrorMessage)) {
+                    result = -2
+                }
 
-                val availableEntries = select("li.record-available")
-                result = getAvailabilityForLocation(availableEntries, location)
+                if (result == -1) {
+                    val availableEntries = select("li.record-available")
+                    result = getAvailabilityForLocation(availableEntries, location)
+                }
 
                 if (result == -1) {
                     val unavailableEntries = select("li.record-not-available")
@@ -129,13 +133,14 @@ class WebClient(val merklisteProperties: MerklisteProperties) {
         return result
     }
 
-    private fun checkAvailabilityErrorMessage(availabilityErrorMessage: Elements?) {
+    private fun availabilityErrorMessagePresent(availabilityErrorMessage: Elements?): Boolean {
         if ((availabilityErrorMessage?.size ?: 0) == 0 ) {
-            return
+            return false
         }
 
         val reason = availabilityErrorMessage!![0].text()
-        throw ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Abrufen der Verfügbarkeit bei buecherhalle.de fehlgeschlagen: $reason")
+        logger.warn("Could not get availability information: $reason")
+        return true
     }
 
     private fun Document.getAvailabilityForLocation(availabilityPerLocationList: Elements, location: String): Int {

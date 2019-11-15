@@ -87,6 +87,17 @@ class WebClientTests {
         Assertions.assertEquals(-1, availability)
     }
 
+
+    @Test
+    fun whenGettingDetails_HandleAvailabilityInfoNotAvailable() {
+        val cut = WebClient(props)
+
+        val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/AvailabilityInfoUnavailable.html")
+
+        Assertions.assertEquals(-2, availability)
+    }
+
+
     @Test
     fun whenGettingDetailsWithoutLocation_UseZentralbibliothek() {
         val cut = WebClient(props)
@@ -101,15 +112,5 @@ class WebClientTests {
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T018915385.html", "Niendorf")
 
         Assertions.assertEquals(0, availability)
-    }
-
-    @Test
-    fun whenGettingDetailsAndAvailabilityInfoUnavailable_Throw() {
-        val cut = WebClient(props)
-
-        val ex = Assertions.assertThrows(ResponseStatusException::class.java) {
-            cut.getMediaDetails("suchergebnis-detail/medium/AvailabilityInfoUnavailable.html")
-        }
-        Assertions.assertTrue(ex.message.contains("Es sind zur Zeit keine Daten zur Verfügbarkeit abrufbar. Bitte wenden Sie sich an das Bibliothekspersonal."))
     }
 }
