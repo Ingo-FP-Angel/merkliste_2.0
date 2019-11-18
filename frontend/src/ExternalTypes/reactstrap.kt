@@ -22,6 +22,9 @@ external interface InputProps: RProps {
     var onChange: ((Event) -> dynamic)?
     var type: String
     var value: String?
+    var id: String?
+    var checked: Boolean?
+    var className: String?
 }
 
 @JsName("Button")
