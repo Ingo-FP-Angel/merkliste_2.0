@@ -19,5 +19,6 @@ class DefaultController(
             : List<Media> {
         logger.info("Incoming request for all available media")
         return buecherhallenService.fetchAll(username, password, location)
+        logger.info("Request finished")
     }
 }
