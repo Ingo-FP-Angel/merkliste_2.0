@@ -5,6 +5,10 @@ input[type="checkbox"] {
   position: static;
 }
 
+p {
+  margin-bottom: 0.5rem;
+}
+
 p.available {
   font-weight: bold;
 }
