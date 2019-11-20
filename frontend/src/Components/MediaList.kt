@@ -32,9 +32,6 @@ class MediaList(props: MediaListProps) : RComponent<MediaListProps, MediaListSta
         } else if (props.Medias.size == 0) {
             p { +"Merkliste leer oder noch nicht abgerufen" }
         } else {
-            Label {
-                +"Nicht verfügbare Medien anzeigen"
-            }
             Input {
                 attrs.type = "checkbox"
                 attrs.id = "showUnavailable"
@@ -45,6 +42,9 @@ class MediaList(props: MediaListProps) : RComponent<MediaListProps, MediaListSta
                         showUnavailable = !showUnavailable
                     }
                 }
+            }
+            Label {
+                +"Nicht verfügbare Medien anzeigen"
             }
             ul {
                 for (item in getMediaList(state.showUnavailable)) {
