@@ -133,6 +133,23 @@ class WebClient(val merklisteProperties: MerklisteProperties) {
         return result
     }
 
+    public fun logout() {
+        runBlocking {
+            logger.info("Logout")
+
+            try {
+                client.get<String>("$baseUrl/logout.html")
+            } catch (ex: RedirectResponseException) {
+                val response = ex.response
+                if (response.headers["Location"] != "$baseUrl/login.html") {
+                    logger.warn("Logout redirected to ${response.headers["Location"]} instead of login page.")
+                    logger.debug(response.toString())
+                    return@runBlocking // don't know why this is necessary...
+                }
+            }
+        }
+    }
+
     private fun availabilityErrorMessagePresent(availabilityErrorMessage: Elements?): Boolean {
         if ((availabilityErrorMessage?.size ?: 0) == 0 ) {
             return false

@@ -11,20 +11,22 @@ class BuecherhallenService(val webClient: WebClient) {
     fun fetchAll(username: String, password: String, location: String?): List<Media> {
         webClient.login(username, password)
 
-        val result: List<Media> = webClient.getAllMedias()
+        try {
+            val result: List<Media> = webClient.getAllMedias()
 
-        for (entry in result) {
-            try {
-                val numberAvailable = if (location.isNullOrEmpty()) webClient.getMediaDetails(entry.url) else webClient.getMediaDetails(entry.url, location)
-                entry.availability = numberAvailable
-            } catch (ex: Throwable) {
-                logger.error("Error while getting availability of ${entry.name} (${entry.url}): ${ex.message}")
-                entry.availability = -3
+            for (entry in result) {
+                try {
+                    val numberAvailable = if (location.isNullOrEmpty()) webClient.getMediaDetails(entry.url) else webClient.getMediaDetails(entry.url, location)
+                    entry.availability = numberAvailable
+                } catch (ex: Throwable) {
+                    logger.error("Error while getting availability of ${entry.name} (${entry.url}): ${ex.message}")
+                    entry.availability = -3
+                }
             }
+
+            return result
+        } finally {
+            webClient.logout()
         }
-
-        webClient.close()
-
-        return result
     }
 }
