@@ -1,0 +1,14 @@
+input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  margin-left: 0;
+  position: static;
+}
+
+p.available {
+  font-weight: bold;
+}
+
+p.unavailable {
+  font-style: italic;
+}
