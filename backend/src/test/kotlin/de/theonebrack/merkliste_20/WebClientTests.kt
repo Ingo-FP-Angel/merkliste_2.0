@@ -3,7 +3,9 @@ package de.theonebrack.merkliste_20
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import de.theonebrack.merkliste_20.Config.MerklisteProperties
+import de.theonebrack.merkliste_20.Models.Media
 import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.*
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 
@@ -17,6 +19,9 @@ class WebClientTests {
         wiremock = WireMockServer(32140)
         configureFor(32140)
         wiremock?.start()
+        stubFor(get(urlEqualTo("/merkliste.html")).willReturn(aResponse()
+                .withBodyFile("merkliste.html")
+        ))
         stubFor(get(urlEqualTo("/suchergebnis-detail/medium/T018915385.html")).willReturn(aResponse()
                 .withBodyFile("Anhalter.html")
         ))
@@ -57,10 +62,24 @@ class WebClientTests {
 
         val cut = WebClient(props)
 
-        val ex = Assertions.assertThrows(ResponseStatusException::class.java) {
+        val ex = assertThrows(ResponseStatusException::class.java) {
             cut.login("user", "pass")
         }
-        Assertions.assertTrue(ex.message.contains("Anmeldung nicht möglich! Der Authentifizierungsdienst steht zur Zeit nicht zur Verfügung."))
+        assertTrue(ex.message.contains("Anmeldung nicht möglich! Der Authentifizierungsdienst steht zur Zeit nicht zur Verfügung."))
+    }
+
+    @Test
+    fun whenGettingMerkliste_ParseCorrectInfo() {
+        val expectedEntries: List<Media> = listOf(
+                Media("Per Anhalter durch die Galaxis / 4. Band Macht`s gut und danke für den Fisch", "Adams, Douglas", "Buch", "Signatur: 1 @ADAM Doug Science-Fiction", "suchergebnis-detail/medium/T018915385.html", -1),
+                Media("Harry Potter", "", "Buch", "Signatur: Qak 5 ROWL HARR", "suchergebnis-detail/medium/T019497569.html", -1),
+                Media("Der Herr der Ringe / Bd. 1. Die Gefährten", "Tolkien, J. R. R.", "Buch", "Signatur: 1 @TOLK John Fantasy", "suchergebnis-detail/medium/T008488736.html", -1)
+        )
+
+        val cut = WebClient(props)
+        val allEntries: List<Media> = cut.getAllMedias()
+
+        assertIterableEquals(expectedEntries, allEntries)
     }
 
     @Test
@@ -68,7 +87,7 @@ class WebClientTests {
         val cut = WebClient(props)
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T018915385.html")
 
-        Assertions.assertEquals(1, availability)
+        assertEquals(1, availability)
     }
 
     @Test
@@ -76,7 +95,7 @@ class WebClientTests {
         val cut = WebClient(props)
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T019497569.html")
 
-        Assertions.assertEquals(0, availability)
+        assertEquals(0, availability)
     }
 
     @Test
@@ -84,7 +103,7 @@ class WebClientTests {
         val cut = WebClient(props)
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T008488736.html")
 
-        Assertions.assertEquals(-1, availability)
+        assertEquals(-1, availability)
     }
 
 
@@ -94,7 +113,7 @@ class WebClientTests {
 
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/AvailabilityInfoUnavailable.html")
 
-        Assertions.assertEquals(-2, availability)
+        assertEquals(-2, availability)
     }
 
 
@@ -103,7 +122,7 @@ class WebClientTests {
         val cut = WebClient(props)
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T018915385.html")
 
-        Assertions.assertEquals(1, availability)
+        assertEquals(1, availability)
     }
 
     @Test
@@ -111,6 +130,6 @@ class WebClientTests {
         val cut = WebClient(props)
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T018915385.html", "Niendorf")
 
-        Assertions.assertEquals(0, availability)
+        assertEquals(0, availability)
     }
 }

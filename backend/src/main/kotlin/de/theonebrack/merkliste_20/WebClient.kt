@@ -28,9 +28,10 @@ import org.springframework.web.server.ResponseStatusException
 
 @Component
 class WebClient(val merklisteProperties: MerklisteProperties) {
-    val logger = LoggerFactory.getLogger(javaClass)
-    val baseUrl: String = merklisteProperties.baseUrl
-    val client: HttpClient = HttpClient(Apache) {
+    private val skipTypes = listOf("eAudio", "eBook", "eInfo", "eMusik", "eVideo")
+    private val logger = LoggerFactory.getLogger(javaClass)
+    private val baseUrl: String = merklisteProperties.baseUrl
+    private val client: HttpClient = HttpClient(Apache) {
         engine {
             followRedirects = false
             socketTimeout = 30_000
@@ -94,12 +95,13 @@ class WebClient(val merklisteProperties: MerklisteProperties) {
                 result = list.select("div.search-results-text").map {
                     Media(
                             name = it.select("h2>a").text(),
+                            author = it.select(".search-results-details-personen>a").text(),
                             type = it.select(".search-results-media-type-text").text(),
                             signature = it.select(".search-results-details-signatur").text(),
                             url = it.select("h2>a").attr("href"),
                             availability = -1
                     )
-                }
+                }.filter { !skipTypes.contains(it.type) }
             }
         }
         logger.info("Found ${result.size} entries")

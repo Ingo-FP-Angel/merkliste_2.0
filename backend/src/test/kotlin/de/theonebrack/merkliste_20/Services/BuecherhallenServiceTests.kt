@@ -14,7 +14,7 @@ class BuecherhallenServiceTests {
     @Test
     fun whenFetchAll_thenLoginGetListAndDetails() {
         val cut = BuecherhallenService(webClientMock)
-        Mockito.`when`(webClientMock.getAllMedias()).thenReturn(listOf(Media("Test", "Buch", "Foo", "details.html", -1)))
+        Mockito.`when`(webClientMock.getAllMedias()).thenReturn(listOf(Media("Test", "Autor", "Buch", "Foo", "details.html", -1)))
         Mockito.`when`(webClientMock.getMediaDetails("details.html")).thenReturn(2)
 
         val result = cut.fetchAll("foo", "bar", null)
@@ -27,7 +27,7 @@ class BuecherhallenServiceTests {
     @Test
     fun whenDifferentLocationIsGiven_thenPassLocationToWebClient() {
         val cut = BuecherhallenService(webClientMock)
-        Mockito.`when`(webClientMock.getAllMedias()).thenReturn(listOf(Media("Test", "Buch", "Foo", "details.html", -1)))
+        Mockito.`when`(webClientMock.getAllMedias()).thenReturn(listOf(Media("Test", "Autor", "Buch", "Foo", "details.html", -1)))
         Mockito.`when`(webClientMock.getMediaDetails("details.html", "Niendorf")).thenReturn(2)
 
         val result = cut.fetchAll("foo", "bar", "Niendorf")
@@ -41,8 +41,8 @@ class BuecherhallenServiceTests {
     fun whenDetailsCallThrows_thenSetSpecialAvailabilityAndContinue() {
         val cut = BuecherhallenService(webClientMock)
         Mockito.`when`(webClientMock.getAllMedias()).thenReturn(listOf(
-                Media("Test", "Buch", "Foo", "fail.html", -1),
-                Media("Test", "Buch", "Foo", "details.html", -1)
+                Media("Test", "Autor", "Buch", "Foo", "fail.html", -1),
+                Media("Test", "Autor", "Buch", "Foo", "details.html", -1)
         ))
         val exceptionOnDetailsPage = Error("DetailsFailed")
         Mockito.`when`(webClientMock.getMediaDetails("fail.html")).thenThrow(exceptionOnDetailsPage)

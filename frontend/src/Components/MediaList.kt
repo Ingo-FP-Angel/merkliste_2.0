@@ -50,7 +50,8 @@ class MediaList(props: MediaListProps) : RComponent<MediaListProps, MediaListSta
                 for (item in getMediaList(state.showUnavailable)) {
                     li {
                         div {
-                            p(if (item.availability > 0) "available" else "unavailable") { +"${item.name}" }
+                            p(if (item.availability > 0) "available" else "unavailable")
+                                { +"${item.name} ${if (!item.author.isNullOrEmpty()) "- " + item.author else ""}" }
                             p { +"${item.type} - ${item.signature}" }
                             p { +getAvailabilityDisplay(item.availability) }
                         }
