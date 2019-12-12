@@ -9,7 +9,9 @@
     "reactstrap": "^8.1.1"
   },
   "devDependencies": {
-    "react-scripts-kotlin": "4.0.1"
+    "react-scripts-kotlin": "4.0.2",
+    "//": "explicit serialize-javascript version to fix vulnerability https://github.com/advisories/GHSA-h9rv-jmmf-4pgx",
+    "serialize-javascript": "^2.1.1"
   },
   "scripts": {
     "start": "react-scripts-kotlin start",
