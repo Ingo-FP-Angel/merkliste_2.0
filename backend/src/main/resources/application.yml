@@ -5,7 +5,7 @@ spring:
 logging:
   level:
     org.apache.http.wire: INFO
-    de.theonebrack.merkliste_20: INFO
+    de.theonebrack.merkliste_20: DEBUG
 
 merkliste:
   baseUrl: https://www.buecherhallen.de

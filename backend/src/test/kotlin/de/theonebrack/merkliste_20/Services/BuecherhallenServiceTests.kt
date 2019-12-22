@@ -74,7 +74,7 @@ class BuecherhallenServiceTests {
         val inputList = listOf(
                 Media("Test", "Autor", "Buch", "Foo", "details.html", -1),
                 Media("Test", "Autor", "DVD", "Foo", "details.html", -1),
-                Media("Test", "Autor", "Blu-ray-Disk", "Foo", "details.html", -1),
+                Media("Test", "Autor", "Blu-ray Disc", "Foo", "details.html", -1),
                 Media("Test", "Autor", "CD", "Foo", "details.html", -1),
                 Media("Test", "Autor", "Noten", "Foo", "details.html", -1)
         )
@@ -91,7 +91,7 @@ class BuecherhallenServiceTests {
         val inputList = listOf(
                 Media("Test", "Autor", "Buch", "Foo", "details.html", -1),
                 Media("Test", "Autor", "DVD", "Foo", "details.html", -1),
-                Media("Test", "Autor", "Blu-ray-Disk", "Foo", "details.html", -1),
+                Media("Test", "Autor", "Blu-ray Disc", "Foo", "details.html", -1),
                 Media("Test", "Autor", "CD", "Foo", "details.html", -1),
                 Media("Test", "Autor", "Noten", "Foo", "details.html", -1)
         )
@@ -108,7 +108,7 @@ class BuecherhallenServiceTests {
         val inputList = listOf(
                 Media("Test", "Autor", "Buch", "Foo", "details.html", -1),
                 Media("Test", "Autor", "DVD", "Foo", "details.html", -1),
-                Media("Test", "Autor", "Blu-ray-Disk", "Foo", "details.html", -1),
+                Media("Test", "Autor", "Blu-ray Disc", "Foo", "details.html", -1),
                 Media("Test", "Autor", "CD", "Foo", "details.html", -1),
                 Media("Test", "Autor", "Noten", "Foo", "details.html", -1)
         )
@@ -117,7 +117,39 @@ class BuecherhallenServiceTests {
         val result = cut.filteredMediaListByType(inputList, "movies")
 
         assertEquals(2, result.size)
-        result.forEach { assert(listOf("DVD", "Blu-ray-Disk").contains(it.type)) }
+        result.forEach { assert(listOf("DVD", "Blu-ray Disc").contains(it.type)) }
+    }
+
+    @Test
+    fun whenMediaTypeFilterIsNull_thenReturnInputList() {
+        val inputList = listOf(
+                Media("Test", "Autor", "Buch", "Foo", "details.html", -1),
+                Media("Test", "Autor", "DVD", "Foo", "details.html", -1),
+                Media("Test", "Autor", "Blu-ray Disc", "Foo", "details.html", -1),
+                Media("Test", "Autor", "CD", "Foo", "details.html", -1),
+                Media("Test", "Autor", "Noten", "Foo", "details.html", -1)
+        )
+        val cut = BuecherhallenService(webClientMock)
+
+        val result = cut.filteredMediaListByType(inputList, null)
+
+        assertSame(inputList, result)
+    }
+
+    @Test
+    fun whenMediaTypeFilterIsEmpty_thenReturnInputList() {
+        val inputList = listOf(
+                Media("Test", "Autor", "Buch", "Foo", "details.html", -1),
+                Media("Test", "Autor", "DVD", "Foo", "details.html", -1),
+                Media("Test", "Autor", "Blu-ray Disc", "Foo", "details.html", -1),
+                Media("Test", "Autor", "CD", "Foo", "details.html", -1),
+                Media("Test", "Autor", "Noten", "Foo", "details.html", -1)
+        )
+        val cut = BuecherhallenService(webClientMock)
+
+        val result = cut.filteredMediaListByType(inputList, "")
+
+        assertSame(inputList, result)
     }
 
     @Test
@@ -125,7 +157,7 @@ class BuecherhallenServiceTests {
         val inputList = listOf(
                 Media("Test", "Autor", "Buch", "Foo", "details.html", -1),
                 Media("Test", "Autor", "DVD", "Foo", "details.html", -1),
-                Media("Test", "Autor", "Blu-ray-Disk", "Foo", "details.html", -1),
+                Media("Test", "Autor", "Blu-ray Disc", "Foo", "details.html", -1),
                 Media("Test", "Autor", "CD", "Foo", "details.html", -1),
                 Media("Test", "Autor", "Noten", "Foo", "details.html", -1)
         )

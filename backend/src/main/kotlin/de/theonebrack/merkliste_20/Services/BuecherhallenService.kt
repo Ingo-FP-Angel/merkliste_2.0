@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component
 @Component
 class BuecherhallenService(val webClient: WebClient) {
     val logger = LoggerFactory.getLogger(javaClass)
+
     fun fetchAll(username: String, password: String, location: String?, mediatype: String?): List<Media> {
         webClient.login(username, password)
 
@@ -36,9 +37,9 @@ class BuecherhallenService(val webClient: WebClient) {
         }
 
         return when (mediaTypeFilter) {
-            "books"  -> inputList.filter { it.type === "Buch" }
-            "music"  -> inputList.filter { it.type === "CD" }
-            "movies" -> inputList.filter { it.type === "DVD" || it.type === "Blu-ray-Disk" }
+            "books"  -> inputList.filter { it.type.equals("Buch") }
+            "music"  -> inputList.filter { it.type.equals("CD") }
+            "movies" -> inputList.filter { it.type.equals("DVD") || it.type.equals("Blu-ray Disc") }
             else -> inputList
         }
     }

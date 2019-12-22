@@ -19,6 +19,8 @@ class DefaultController(
             @RequestParam("mediatype", required = false) mediatype: String?)
             : List<Media> {
         logger.info("Incoming request for all available media")
+        logger.debug("Requested location: $location")
+        logger.debug("Requested mediatype: $mediatype")
         val media = buecherhallenService.fetchAll(username, password, location, mediatype)
         logger.info("Request finished")
         return media

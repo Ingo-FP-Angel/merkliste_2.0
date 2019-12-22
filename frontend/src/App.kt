@@ -1,5 +1,6 @@
 import Components.LocationSelect
 import Components.MediaList
+import Components.MediatypeSelect
 import ExternalTypes.*
 import Models.Media
 import react.dom.*
@@ -13,6 +14,7 @@ interface AppState : RState {
     var user: String
     var pass: String
     var location: String
+    var mediatype: String
     var availableItems: List<Media>
     var isLoading: Boolean
     var errorMessage: String
@@ -23,6 +25,7 @@ class App : RComponent<RProps, AppState>() {
         user = ""
         pass = ""
         location = "Zentralbibliothek"
+        mediatype = "all"
         availableItems = listOf()
         isLoading = false
         errorMessage = ""
@@ -63,6 +66,14 @@ class App : RComponent<RProps, AppState>() {
                     onSelect = { value ->
                         setState {
                             location = value
+                        }
+                    }
+                }
+                MediatypeSelect {
+                    mediatype = state.mediatype
+                    onSelect = { value ->
+                        setState {
+                            mediatype = value
                         }
                     }
                 }
@@ -108,7 +119,7 @@ class App : RComponent<RProps, AppState>() {
         val mainScope = MainScope()
         mainScope.launch {
             try {
-                val medias = fetchAvailableMedias(state.user, state.pass, state.location)
+                val medias = fetchAvailableMedias(state.user, state.pass, state.location, state.mediatype)
                 setState {
                     isLoading = false
                     availableItems = medias.toList()
