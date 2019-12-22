@@ -15,10 +15,11 @@ class DefaultController(
     @GetMapping("/api/media")
     fun get(@RequestHeader("username") username: String,
             @RequestHeader("password") password: String,
-            @RequestParam("location", required = false) location: String?)
+            @RequestParam("location", required = false) location: String?,
+            @RequestParam("mediatype", required = false) mediatype: String?)
             : List<Media> {
         logger.info("Incoming request for all available media")
-        val media = buecherhallenService.fetchAll(username, password, location)
+        val media = buecherhallenService.fetchAll(username, password, location, mediatype)
         logger.info("Request finished")
         return media
     }

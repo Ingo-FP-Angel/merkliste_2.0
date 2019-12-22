@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.server.ResponseStatusException
 
 @Component
-class WebClient(val merklisteProperties: MerklisteProperties) {
+class WebClient(merklisteProperties: MerklisteProperties) {
     private val skipTypes = listOf("eAudio", "eBook", "eInfo", "eMusik", "eVideo")
     private val logger = LoggerFactory.getLogger(javaClass)
     private val baseUrl: String = merklisteProperties.baseUrl

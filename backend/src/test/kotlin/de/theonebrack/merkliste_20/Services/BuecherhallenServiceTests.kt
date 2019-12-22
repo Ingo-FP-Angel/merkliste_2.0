@@ -3,6 +3,7 @@ package de.theonebrack.merkliste_20.Services
 import de.theonebrack.merkliste_20.Models.Media
 import de.theonebrack.merkliste_20.WebClient
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
@@ -17,7 +18,7 @@ class BuecherhallenServiceTests {
         Mockito.`when`(webClientMock.getAllMedias()).thenReturn(listOf(Media("Test", "Autor", "Buch", "Foo", "details.html", -1)))
         Mockito.`when`(webClientMock.getMediaDetails("details.html")).thenReturn(2)
 
-        val result = cut.fetchAll("foo", "bar", null)
+        val result = cut.fetchAll("foo", "bar", null, null)
 
         verify(webClientMock).login("foo", "bar")
         assertEquals(1, result.size)
@@ -30,7 +31,7 @@ class BuecherhallenServiceTests {
         Mockito.`when`(webClientMock.getAllMedias()).thenReturn(listOf(Media("Test", "Autor", "Buch", "Foo", "details.html", -1)))
         Mockito.`when`(webClientMock.getMediaDetails("details.html", "Niendorf")).thenReturn(2)
 
-        val result = cut.fetchAll("foo", "bar", "Niendorf")
+        val result = cut.fetchAll("foo", "bar", "Niendorf", null)
 
         verify(webClientMock).login("foo", "bar")
         assertEquals(1, result.size)
@@ -48,10 +49,90 @@ class BuecherhallenServiceTests {
         Mockito.`when`(webClientMock.getMediaDetails("fail.html")).thenThrow(exceptionOnDetailsPage)
         Mockito.`when`(webClientMock.getMediaDetails("details.html")).thenReturn(2)
 
-        val result = cut.fetchAll("foo", "bar", null)
+        val result = cut.fetchAll("foo", "bar", null, null)
         assertEquals(2, result.size)
         assertEquals(-3, result[0].availability)
         assertEquals(2, result[1].availability)
+    }
 
+    @Test
+    fun whenMediaTypeFilterIsGiven_ApplyFilterOnMediaListRetrievedFromBuecherhallen() {
+        val cut = BuecherhallenService(webClientMock)
+        Mockito.`when`(webClientMock.getAllMedias()).thenReturn(listOf(
+                Media("Test", "Autor", "Buch", "Foo", "details.html", -1),
+                Media("Test", "Autor", "DVD", "Foo", "details.html", -1)
+        ))
+        Mockito.`when`(webClientMock.getMediaDetails("details.html")).thenReturn(2)
+
+        val result = cut.fetchAll("foo", "bar", null, "books")
+
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun whenMediaTypeFilterBooks_thenReturnBuch() {
+        val inputList = listOf(
+                Media("Test", "Autor", "Buch", "Foo", "details.html", -1),
+                Media("Test", "Autor", "DVD", "Foo", "details.html", -1),
+                Media("Test", "Autor", "Blu-ray-Disk", "Foo", "details.html", -1),
+                Media("Test", "Autor", "CD", "Foo", "details.html", -1),
+                Media("Test", "Autor", "Noten", "Foo", "details.html", -1)
+        )
+        val cut = BuecherhallenService(webClientMock)
+
+        val result = cut.filteredMediaListByType(inputList, "books")
+
+        assertEquals(1, result.size)
+        result.forEach { assertEquals("Buch", it.type) }
+    }
+
+    @Test
+    fun whenMediaTypeFilterMusic_thenReturnCD() {
+        val inputList = listOf(
+                Media("Test", "Autor", "Buch", "Foo", "details.html", -1),
+                Media("Test", "Autor", "DVD", "Foo", "details.html", -1),
+                Media("Test", "Autor", "Blu-ray-Disk", "Foo", "details.html", -1),
+                Media("Test", "Autor", "CD", "Foo", "details.html", -1),
+                Media("Test", "Autor", "Noten", "Foo", "details.html", -1)
+        )
+        val cut = BuecherhallenService(webClientMock)
+
+        val result = cut.filteredMediaListByType(inputList, "music")
+
+        assertEquals(1, result.size)
+        result.forEach { assertEquals("CD", it.type) }
+    }
+
+    @Test
+    fun whenMediaTypeFilterMovies_thenReturnDVDAndBluRay() {
+        val inputList = listOf(
+                Media("Test", "Autor", "Buch", "Foo", "details.html", -1),
+                Media("Test", "Autor", "DVD", "Foo", "details.html", -1),
+                Media("Test", "Autor", "Blu-ray-Disk", "Foo", "details.html", -1),
+                Media("Test", "Autor", "CD", "Foo", "details.html", -1),
+                Media("Test", "Autor", "Noten", "Foo", "details.html", -1)
+        )
+        val cut = BuecherhallenService(webClientMock)
+
+        val result = cut.filteredMediaListByType(inputList, "movies")
+
+        assertEquals(2, result.size)
+        result.forEach { assert(listOf("DVD", "Blu-ray-Disk").contains(it.type)) }
+    }
+
+    @Test
+    fun whenMediaTypeFilterNotSupported_thenReturnInputList() {
+        val inputList = listOf(
+                Media("Test", "Autor", "Buch", "Foo", "details.html", -1),
+                Media("Test", "Autor", "DVD", "Foo", "details.html", -1),
+                Media("Test", "Autor", "Blu-ray-Disk", "Foo", "details.html", -1),
+                Media("Test", "Autor", "CD", "Foo", "details.html", -1),
+                Media("Test", "Autor", "Noten", "Foo", "details.html", -1)
+        )
+        val cut = BuecherhallenService(webClientMock)
+
+        val result = cut.filteredMediaListByType(inputList, "foo")
+
+        assertSame(inputList, result)
     }
 }
