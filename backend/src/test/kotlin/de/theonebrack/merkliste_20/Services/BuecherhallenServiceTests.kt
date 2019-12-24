@@ -5,18 +5,18 @@ import de.theonebrack.merkliste_20.WebClient
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 
 class BuecherhallenServiceTests {
-    val webClientMock = mock(WebClient::class.java)
+    val webClientMock = mock<WebClient>()
 
     @Test
     fun whenFetchAll_thenLoginGetListAndDetails() {
         val cut = BuecherhallenService(webClientMock)
-        Mockito.`when`(webClientMock.getAllMedias()).thenReturn(listOf(Media("Test", "Autor", "Buch", "Foo", "details.html", -1)))
-        Mockito.`when`(webClientMock.getMediaDetails("details.html")).thenReturn(2)
+        whenever(webClientMock.getAllMedias()).thenReturn(listOf(Media("Test", "Autor", "Buch", "Foo", "details.html", -1)))
+        whenever(webClientMock.getMediaDetails("details.html")).thenReturn(2)
 
         val result = cut.fetchAll("foo", "bar", null, null)
 
@@ -28,8 +28,8 @@ class BuecherhallenServiceTests {
     @Test
     fun whenDifferentLocationIsGiven_thenPassLocationToWebClient() {
         val cut = BuecherhallenService(webClientMock)
-        Mockito.`when`(webClientMock.getAllMedias()).thenReturn(listOf(Media("Test", "Autor", "Buch", "Foo", "details.html", -1)))
-        Mockito.`when`(webClientMock.getMediaDetails("details.html", "Niendorf")).thenReturn(2)
+        whenever(webClientMock.getAllMedias()).thenReturn(listOf(Media("Test", "Autor", "Buch", "Foo", "details.html", -1)))
+        whenever(webClientMock.getMediaDetails("details.html", "Niendorf")).thenReturn(2)
 
         val result = cut.fetchAll("foo", "bar", "Niendorf", null)
 
@@ -41,13 +41,13 @@ class BuecherhallenServiceTests {
     @Test
     fun whenDetailsCallThrows_thenSetSpecialAvailabilityAndContinue() {
         val cut = BuecherhallenService(webClientMock)
-        Mockito.`when`(webClientMock.getAllMedias()).thenReturn(listOf(
+        whenever(webClientMock.getAllMedias()).thenReturn(listOf(
                 Media("Test", "Autor", "Buch", "Foo", "fail.html", -1),
                 Media("Test", "Autor", "Buch", "Foo", "details.html", -1)
         ))
         val exceptionOnDetailsPage = Error("DetailsFailed")
-        Mockito.`when`(webClientMock.getMediaDetails("fail.html")).thenThrow(exceptionOnDetailsPage)
-        Mockito.`when`(webClientMock.getMediaDetails("details.html")).thenReturn(2)
+        whenever(webClientMock.getMediaDetails("fail.html")).thenThrow(exceptionOnDetailsPage)
+        whenever(webClientMock.getMediaDetails("details.html")).thenReturn(2)
 
         val result = cut.fetchAll("foo", "bar", null, null)
         assertEquals(2, result.size)
@@ -58,11 +58,11 @@ class BuecherhallenServiceTests {
     @Test
     fun whenMediaTypeFilterIsGiven_ApplyFilterOnMediaListRetrievedFromBuecherhallen() {
         val cut = BuecherhallenService(webClientMock)
-        Mockito.`when`(webClientMock.getAllMedias()).thenReturn(listOf(
+        whenever(webClientMock.getAllMedias()).thenReturn(listOf(
                 Media("Test", "Autor", "Buch", "Foo", "details.html", -1),
                 Media("Test", "Autor", "DVD", "Foo", "details.html", -1)
         ))
-        Mockito.`when`(webClientMock.getMediaDetails("details.html")).thenReturn(2)
+        whenever(webClientMock.getMediaDetails("details.html")).thenReturn(2)
 
         val result = cut.fetchAll("foo", "bar", null, "books")
 

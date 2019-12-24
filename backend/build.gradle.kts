@@ -35,6 +35,7 @@ dependencies {
 	testImplementation(group ="com.github.tomakehurst", name = "wiremock-jre8", version = "2.25.1")
 	testImplementation(group = "org.assertj", name = "assertj-core")
 	testImplementation(group ="org.springframework.boot", name = "spring-boot-starter-test")
+	testImplementation(group ="com.nhaarman.mockitokotlin2", name = "mockito-kotlin", version = "2.2.0")
 }
 
 tasks.withType<Test> {
