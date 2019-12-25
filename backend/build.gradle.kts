@@ -54,7 +54,6 @@ task<Test>("integration") {
 	filter {
 		includeTestsMatching("*IT")
 	}
-	dependsOn("test")
 }
 
 tasks.withType<KotlinCompile> {
