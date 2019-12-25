@@ -22,11 +22,16 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.jsoup.select.Selector
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Scope
+import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import org.springframework.web.context.WebApplicationContext
 import org.springframework.web.server.ResponseStatusException
 
 @Component
+@Scope(value = WebApplicationContext.SCOPE_REQUEST,
+        proxyMode = ScopedProxyMode.TARGET_CLASS)
 class WebClient(merklisteProperties: MerklisteProperties) {
     private val skipTypes = listOf("eAudio", "eBook", "eInfo", "eMusik", "eVideo")
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -135,7 +140,7 @@ class WebClient(merklisteProperties: MerklisteProperties) {
         return result
     }
 
-    public fun logout() {
+    fun logout() {
         runBlocking {
             logger.info("Logout")
 
