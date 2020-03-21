@@ -3,15 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "kotlinx-coroutines-core": "^1.3.2",
-    "react": "^16.11.0",
-    "react-dom": "^16.11.0",
-    "reactstrap": "^8.1.1"
+    "kotlinx-coroutines-core": "1.3.5",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "reactstrap": "8.4.1"
   },
   "devDependencies": {
-    "react-scripts-kotlin": "4.0.2",
-    "//": "explicit serialize-javascript version to fix vulnerability https://github.com/advisories/GHSA-h9rv-jmmf-4pgx",
-    "serialize-javascript": "^2.1.1"
+    "react-scripts-kotlin": "4.0.3",
+    "//": "explicit versions to fix vulnerabilities",
+    "acorn": "6.4.1",
+    "minimist": "1.2.5",
+    "serialize-javascript": "2.1.2"
   },
   "scripts": {
     "start": "react-scripts-kotlin start",
