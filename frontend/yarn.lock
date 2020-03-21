@@ -2845,7 +2845,7 @@ kotlin-compiler@^1.3.61:
   resolved "https://registry.yarnpkg.com/kotlin-compiler/-/kotlin-compiler-1.3.70.tgz#dd563ecd1fbb8ef2fea9499770db108dbd6aed74"
   integrity sha512-MhZKDbCrZH38dVW3EzKviItMQFo9zr+J5KMMsLItQwmsNLx1Em0aowTKUGOBD/J/BOYsxUrSpcx03JWZg2BzdA==
 
-kotlin@^1.3.70:
+kotlin@1.3.70, kotlin@^1.3.70:
   version "1.3.70"
   resolved "https://registry.yarnpkg.com/kotlin/-/kotlin-1.3.70.tgz#c5aa9774268bcbb55b853bfabdc71f6ed1062202"
   integrity sha512-fE2LHxupY6YajaHuFW/UVvzjBWvdyOYyC6jR/g87rtU8uOqeoHl4T7N4RzuM+ZBXI9lStUFY9i+xhR7lVfwslQ==
