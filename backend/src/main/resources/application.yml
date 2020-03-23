@@ -8,4 +8,5 @@ logging:
     de.theonebrack.merkliste_20: INFO
 
 merkliste:
-  baseUrl: https://www.buecherhallen.de
+#  baseUrl: https://www.buecherhallen.de
+  baseUrl: http://localhost:9090

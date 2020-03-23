@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*
 class DefaultController(
         private val buecherhallenService: BuecherhallenService
 ) {
-    val logger = LoggerFactory.getLogger(DefaultController::class.java)
+    val logger = LoggerFactory.getLogger(javaClass)
 
     @GetMapping("/api/media")
     fun get(@RequestHeader("username") username: String,

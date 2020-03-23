@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "kotlin": "1.3.70",
+    "can-ndjson-stream": "1.0.2",
+    "kotlin": "1.3.71",
     "kotlinx-coroutines-core": "1.3.5",
     "react": "16.13.1",
     "react-dom": "16.13.1",

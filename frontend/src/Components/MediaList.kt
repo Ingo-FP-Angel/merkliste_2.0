@@ -29,9 +29,14 @@ class MediaList(props: MediaListProps) : RComponent<MediaListProps, MediaListSta
     override fun RBuilder.render() {
         if (props.isLoading) {
             p { +"Merkliste wird abgerufen. Dies dauert etwa eine Sekunde pro Merklisteneintrag." }
-        } else if (props.Medias.size == 0) {
+        }
+
+        if (props.Medias.size == 0) {
             p { +"Merkliste leer oder noch nicht abgerufen" }
         } else {
+            p {
+                if (props.isLoading) +"Bisher abgerufe Einträge: ${props.Medias.size}" else +"Gesamte Einträge: ${props.Medias.size}"
+            }
             Input {
                 attrs.type = "checkbox"
                 attrs.id = "showUnavailable"

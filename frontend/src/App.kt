@@ -6,7 +6,11 @@ import Models.Media
 import react.dom.*
 import react.*
 import org.w3c.dom.HTMLInputElement
+import org.w3c.fetch.*
+import kotlin.browser.window
+import kotlin.js.json
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.await
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -116,23 +120,76 @@ class App : RComponent<RProps, AppState>() {
             errorMessage = ""
             availableItems = listOf()
         }
+        val useStream = true
         val mainScope = MainScope()
-        mainScope.launch {
-            try {
-                val medias = fetchAvailableMedias(state.user, state.pass, state.location, state.mediatype)
-                setState {
-                    isLoading = false
-                    availableItems = medias.toList()
-                }
-            } catch (err: Error) {
-                setState {
-                    errorMessage = err.message ?: "Fehler beim Abrufen"
-                }
-            } finally {
-                setState {
-                    isLoading = false
+        if (useStream) {
+            mainScope.launch {
+                try {
+                    val backendBaseUrl = if (process.env.NODE_ENV == "production") "/api" else "http://localhost:8080/api"
+                    val responsePromise = window.fetch("$backendBaseUrl/flux/media?location=${state.location}&mediatype=${state.mediatype}",
+                            object: RequestInit {
+                                override var method: String? = "GET"
+                                override var headers: dynamic = json("username" to state.user, "password" to state.pass)
+                            }
+                    )
+
+                    responsePromise.then { response ->
+                        ndjsonStream(response.body)
+                    }.then { stream ->
+                        val reader = stream.getReader()
+                        var readRecurse: ((result: Result) -> Unit)? = null
+                        readRecurse = { result ->
+                            console.log("result = ", result)
+                            if (!result.done) {
+                                val media = convertToMedia(result?.value)
+                                console.log("media = ", media)
+                                media?.let {
+                                    setState {
+                                        availableItems = availableItems + listOf(media)
+                                    }
+                                }
+                                reader.read().then(readRecurse)
+                            } else {
+                                setState {
+                                    isLoading = false
+                                }
+                            }
+                        }
+                        reader.read().then(readRecurse)
+                    }
+                } catch (err: Error) {
+                    setState {
+                        errorMessage = err.message ?: "Fehler beim Abrufen"
+                        isLoading = false
+                    }
+                } finally {
                 }
             }
+        } else {
+            mainScope.launch {
+                try {
+                    val medias = fetchAvailableMedias(state.user, state.pass, state.location, state.mediatype)
+                    setState {
+                        isLoading = false
+                        availableItems = medias.toList()
+                    }
+                } catch (err: Error) {
+                    setState {
+                        errorMessage = err.message ?: "Fehler beim Abrufen"
+                    }
+                } finally {
+                    setState {
+                        isLoading = false
+                    }
+                }
+            }
+        }
+    }
+
+    private fun convertToMedia(input: Any?): Media? {
+        return input?.let {
+            val foo = it.asDynamic()
+            Media(foo.name, foo.author, foo.type, foo.signature, foo.url, foo.availability)
         }
     }
 }

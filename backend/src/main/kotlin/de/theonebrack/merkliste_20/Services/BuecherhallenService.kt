@@ -4,6 +4,7 @@ import de.theonebrack.merkliste_20.Models.Media
 import de.theonebrack.merkliste_20.WebClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import reactor.core.publisher.FluxSink
 
 @Component
 class BuecherhallenService(val webClient: WebClient) {
@@ -29,6 +30,31 @@ class BuecherhallenService(val webClient: WebClient) {
         } finally {
             webClient.logout()
         }
+    }
+
+    fun fetchAllFlux(username: String, password: String, location: String?, mediatype: String?, sink: FluxSink<Media>) {
+        val t = Thread {
+            webClient.login(username, password)
+
+            try {
+                val result: List<Media> = filteredMediaListByType(webClient.getAllMedias(), mediatype)
+
+                for (entry in result) {
+                    try {
+                        val numberAvailable = if (location.isNullOrEmpty()) webClient.getMediaDetails(entry.url) else webClient.getMediaDetails(entry.url, location)
+                        entry.availability = numberAvailable
+                    } catch (ex: Throwable) {
+                        logger.error("Error while getting availability of ${entry.name} (${entry.url}): ${ex.message}")
+                        entry.availability = -3
+                    }
+                    sink.next(entry)
+                }
+            } finally {
+                webClient.logout()
+                sink.complete()
+            }
+        }
+        t.start()
     }
 
     fun filteredMediaListByType(inputList: List<Media>, mediaTypeFilter: String?): List<Media> {

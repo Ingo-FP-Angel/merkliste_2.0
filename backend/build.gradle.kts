@@ -9,8 +9,8 @@ plugins {
 	id("java")
 	id("org.springframework.boot") version "2.2.5.RELEASE"
 	id("io.spring.dependency-management") version "1.0.8.RELEASE"
-	kotlin("jvm") version "1.3.70"
-	kotlin("plugin.spring") version "1.3.70"
+	kotlin("jvm") version "1.3.71"
+	kotlin("plugin.spring") version "1.3.71"
 }
 
 val appName = "merkliste_20"
@@ -24,6 +24,7 @@ repositories {
 
 dependencies {
 	implementation(group = "org.springframework.boot", name = "spring-boot-starter-web")
+	implementation(group = "org.springframework.boot", name = "spring-boot-starter-webflux")
 	implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin")
 	implementation(group = "org.jetbrains.kotlin", name = "kotlin-reflect")
 	implementation(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8")
@@ -31,6 +32,7 @@ dependencies {
 	implementation(group = "io.ktor", name = "ktor-client-core", version = ktor_version)
 	implementation(group = "io.ktor", name = "ktor-client-apache", version = ktor_version)
 	implementation(group = "org.jsoup", name = "jsoup", version = "1.12.1")
+	implementation(group = "io.reactivex.rxjava2", name = "rxjava", version = "2.2.17")
 
 	testImplementation(group ="com.github.tomakehurst", name = "wiremock-jre8", version = "2.25.1")
 	testImplementation(group = "org.assertj", name = "assertj-core")
@@ -54,7 +56,6 @@ task<Test>("integration") {
 	filter {
 		includeTestsMatching("*IT")
 	}
-	dependsOn("test")
 }
 
 tasks.withType<KotlinCompile> {
