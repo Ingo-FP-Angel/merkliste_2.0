@@ -14,6 +14,8 @@ import kotlinx.coroutines.await
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+external val process: dynamic
+
 interface AppState : RState {
     var user: String
     var pass: String
@@ -120,9 +122,7 @@ class App : RComponent<RProps, AppState>() {
             errorMessage = ""
             availableItems = listOf()
         }
-        val useStream = true
         val mainScope = MainScope()
-        if (useStream) {
             mainScope.launch {
                 try {
                     val backendBaseUrl = if (process.env.NODE_ENV == "production") "/api" else "http://localhost:8080/api"
@@ -139,16 +139,21 @@ class App : RComponent<RProps, AppState>() {
                         val reader = stream.getReader()
                         var readRecurse: ((result: Result) -> Unit)? = null
                         readRecurse = { result ->
-                            console.log("result = ", result)
                             if (!result.done) {
-                                val media = convertToMedia(result?.value)
-                                console.log("media = ", media)
-                                media?.let {
+                                try {
+                                    val media = convertToMedia(result?.value)
+                                    media?.let {
+                                        setState {
+                                            availableItems = availableItems + listOf(media)
+                                        }
+                                    }
+                                    reader.read().then(readRecurse)
+                                } catch (err: Error) {
                                     setState {
-                                        availableItems = availableItems + listOf(media)
+                                        errorMessage = err.message ?: "Fehler beim Abrufen"
+                                        isLoading = false
                                     }
                                 }
-                                reader.read().then(readRecurse)
                             } else {
                                 setState {
                                     isLoading = false
@@ -156,40 +161,30 @@ class App : RComponent<RProps, AppState>() {
                             }
                         }
                         reader.read().then(readRecurse)
+                    }.catch { err ->
+                        setState {
+                            errorMessage = "Unerwarteter Fehler: ${err.message ?: "Fehler beim Abrufen"}"
+                            isLoading = false
+                        }
                     }
                 } catch (err: Error) {
                     setState {
                         errorMessage = err.message ?: "Fehler beim Abrufen"
                         isLoading = false
                     }
-                } finally {
                 }
-            }
-        } else {
-            mainScope.launch {
-                try {
-                    val medias = fetchAvailableMedias(state.user, state.pass, state.location, state.mediatype)
-                    setState {
-                        isLoading = false
-                        availableItems = medias.toList()
-                    }
-                } catch (err: Error) {
-                    setState {
-                        errorMessage = err.message ?: "Fehler beim Abrufen"
-                    }
-                } finally {
-                    setState {
-                        isLoading = false
-                    }
-                }
-            }
         }
     }
 
     private fun convertToMedia(input: Any?): Media? {
         return input?.let {
-            val foo = it.asDynamic()
-            Media(foo.name, foo.author, foo.type, foo.signature, foo.url, foo.availability)
+            val json = it.asDynamic()
+            if (json.status) {
+                throw Error("Abrufen fehlgeschlagen mit Status Code '${json.status} ${json.error}' und Hinweis '${json.message}'")
+            }
+            Media(json.name, json.author, json.type, json.signature, json.url, json.availability)
         }
     }
 }
+
+data class ErrorResponse(val timestamp: String, val status: Int, val error: String, val message: String, val path: String)
