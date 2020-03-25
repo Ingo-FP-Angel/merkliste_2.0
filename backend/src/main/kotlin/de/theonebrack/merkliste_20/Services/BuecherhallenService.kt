@@ -33,8 +33,8 @@ class BuecherhallenService(val webClient: WebClient) {
     }
 
     fun fetchAllFlux(username: String, password: String, location: String?, mediatype: String?, sink: FluxSink<Media>) {
+        webClient.login(username, password)
         val t = Thread {
-            webClient.login(username, password)
 
             try {
                 val result: List<Media> = filteredMediaListByType(webClient.getAllMedias(), mediatype)

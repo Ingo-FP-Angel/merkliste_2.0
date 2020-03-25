@@ -22,16 +22,17 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.jsoup.select.Selector
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Scope
+import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import org.springframework.web.context.WebApplicationContext
 import org.springframework.web.server.ResponseStatusException
+import java.net.ConnectException
 
 @Component
-// ToDo: make request scope work again
-/*
 @Scope(value = WebApplicationContext.SCOPE_REQUEST,
         proxyMode = ScopedProxyMode.TARGET_CLASS)
- */
 class WebClient(merklisteProperties: MerklisteProperties) {
     private val skipTypes = listOf("eAudio", "eBook", "eInfo", "eMusik", "eVideo")
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -51,39 +52,43 @@ class WebClient(merklisteProperties: MerklisteProperties) {
     fun login(username: String, password: String) {
         runBlocking {
             logger.info("Get login page")
-            val loginPage = client.get<String>("$baseUrl/login.html")
+            try {
+                val loginPage = client.get<String>("$baseUrl/login.html")
 
-            Jsoup.parse(loginPage).run {
-                val loginForm: Element = selectFirst("#tl_login")
+                Jsoup.parse(loginPage).run {
+                    val loginForm: Element = selectFirst("#tl_login")
 
-                val loginData = LoginFormData(
-                        loginForm.getElementsByAttributeValue("name", "FORM_SUBMIT").first().attr("value"),
-                        loginForm.getElementsByAttributeValue("name", "REQUEST_TOKEN").first().attr("value"),
-                        username,
-                        password
-                )
+                    val loginData = LoginFormData(
+                            loginForm.getElementsByAttributeValue("name", "FORM_SUBMIT").first().attr("value"),
+                            loginForm.getElementsByAttributeValue("name", "REQUEST_TOKEN").first().attr("value"),
+                            username,
+                            password
+                    )
 
-                logger.info("Post login form")
-                try {
-                    val loginResult = client.post<String> {
-                        url("$baseUrl/login.html")
-                        header("Referer", "$baseUrl/login.html")
-                        body = TextContent(loginData.toString(), contentType = ContentType.Application.FormUrlEncoded)
-                    }
-                    logger.debug("Login result")
-                    logger.debug(loginResult)
-                } catch (ex: RedirectResponseException) {
-                    val response = ex.response
-                    if (response.headers["Location"] == "$baseUrl/login.html") {
-                        val loginPageWithReason = client.get<String>("$baseUrl/login.html")
-                        Jsoup.parse(loginPageWithReason).run {
-                            val form: Element = selectFirst("#tl_login")
-                            val reason = form.getElementsByClass("error").first().text()
-                            logger.error("Login failed: $reason")
-                            throw ResponseStatusException(HttpStatus.BAD_GATEWAY, "Login bei buecherhalle.de fehlgeschlagen: $reason")
+                    logger.info("Post login form")
+                    try {
+                        val loginResult = client.post<String> {
+                            url("$baseUrl/login.html")
+                            header("Referer", "$baseUrl/login.html")
+                            body = TextContent(loginData.toString(), contentType = ContentType.Application.FormUrlEncoded)
+                        }
+                        logger.debug("Login result")
+                        logger.debug(loginResult)
+                    } catch (ex: RedirectResponseException) {
+                        val response = ex.response
+                        if (response.headers["Location"] == "$baseUrl/login.html") {
+                            val loginPageWithReason = client.get<String>("$baseUrl/login.html")
+                            Jsoup.parse(loginPageWithReason).run {
+                                val form: Element = selectFirst("#tl_login")
+                                val reason = form.getElementsByClass("error").first().text()
+                                logger.error("Login failed: $reason")
+                                throw ResponseStatusException(HttpStatus.BAD_GATEWAY, "Login bei buecherhalle.de fehlgeschlagen: $reason")
+                            }
                         }
                     }
                 }
+            } catch (ex: ConnectException) {
+                throw ResponseStatusException(HttpStatus.BAD_GATEWAY, "Verbindung zu buecherhalle.de fehlgeschlagen: ${ex.message}")
             }
         }
     }
