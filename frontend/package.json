@@ -7,7 +7,9 @@
     "kotlinx-coroutines-core": "1.3.5",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "reactstrap": "8.4.1"
+    "reactstrap": "8.4.1",
+    "//": "explicit versions to fix vulnerabilities",
+    "lodash": "4.17.19"
   },
   "devDependencies": {
     "react-scripts-kotlin": "4.0.3",
