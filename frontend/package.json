@@ -3,20 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "kotlin": "1.3.70",
-    "kotlinx-coroutines-core": "1.3.5",
+    "kotlin": "1.4.0",
+    "kotlinx-coroutines-core": "1.3.9",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "reactstrap": "8.4.1",
-    "//": "explicit versions to fix vulnerabilities",
-    "lodash": "4.17.19"
+    "reactstrap": "8.5.1"
   },
   "devDependencies": {
-    "react-scripts-kotlin": "4.0.3",
-    "//": "explicit versions to fix vulnerabilities",
-    "acorn": "6.4.1",
-    "minimist": "1.2.5",
-    "serialize-javascript": "2.1.2"
+    "react-scripts-kotlin": "4.0.3"
   },
   "scripts": {
     "start": "react-scripts-kotlin start",
