@@ -6,6 +6,7 @@ import Models.Media
 import react.dom.*
 import react.*
 import org.w3c.dom.HTMLInputElement
+import kotlinx.browser.localStorage
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -14,17 +15,21 @@ interface AppState : RState {
     var user: String
     var pass: String
     var location: String
+    var defaultLocation: String?
     var mediatype: String
     var availableItems: List<Media>
     var isLoading: Boolean
     var errorMessage: String
 }
 
+val localStorageDefaultLocation = "merkliste:defaultLocation"
+
 class App : RComponent<RProps, AppState>() {
     override fun AppState.init() {
         user = ""
         pass = ""
-        location = "Zentralbibliothek"
+        location = localStorage.getItem(localStorageDefaultLocation) ?: "Zentralbibliothek"
+        defaultLocation = localStorage.getItem(localStorageDefaultLocation)
         mediatype = "all"
         availableItems = listOf()
         isLoading = false
@@ -64,6 +69,7 @@ class App : RComponent<RProps, AppState>() {
                 LocationSelect {
                     location = state.location
                     onSelect = { value ->
+                        localStorage.setItem(localStorageDefaultLocation, value)
                         setState {
                             location = value
                         }
