@@ -3,7 +3,7 @@ name: Release
 on: [push]
 
 jobs:
-  path-context:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,6 +16,8 @@ jobs:
           java-version: 11
       - name: Build with Gradle
         run: ./gradlew :backend:copyBackendJar :backend:copyDockerfiles
+        env:
+          CI: ""
       - name: Push to GitHub Packages
         uses: docker/build-push-action@v2
         with:
