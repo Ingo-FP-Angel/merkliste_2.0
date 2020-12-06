@@ -21,6 +21,8 @@ fun RBuilder.MediaList(handler: MediaListProps.() -> Unit): ReactElement {
     }
 }
 
+val baseUrl= "https://www.buecherhallen.de/"
+
 class MediaList(props: MediaListProps) : RComponent<MediaListProps, MediaListState>() {
     override fun MediaListState.init() {
         showUnavailable = false
@@ -53,7 +55,17 @@ class MediaList(props: MediaListProps) : RComponent<MediaListProps, MediaListSta
                             p(if (item.availability > 0) "available" else "unavailable")
                                 { +"${item.name} ${if (!item.author.isNullOrEmpty()) "- " + item.author else ""}" }
                             p { +"${item.type} - ${item.signature}" }
-                            p { +getAvailabilityDisplay(item.availability) }
+                            p {
+                                +"${getAvailabilityDisplay(item.availability)} - "
+                                a {
+                                    attrs.href = baseUrl + item.url
+                                    attrs.target = "_blank"
+                                    +"Details anzeigen"
+                                    img {
+                                        attrs.src = "external-link-ltr-icon.svg"
+                                    }
+                                }
+                            }
                         }
                     }
                 }
