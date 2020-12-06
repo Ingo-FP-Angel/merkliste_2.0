@@ -26,6 +26,5 @@ jobs:
           PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           REGISTRY: docker.pkg.github.com
           BUILD_PATH: ${{github.workspace}}/backend/build/docker
-          REPOSITORY: ingo-fp-angel/merkliste_2.0
-          IMAGE_NAME: merkliste_20
+          IMAGE_URI: docker.pkg.github.com/ingo-fp-angel/merkliste_2.0/merkliste_20
           TAG_NAME: ${{env.VERSION}}
