@@ -14,17 +14,18 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Build with Gradle
+      - name: Build with Gradle and prepare Docker files
         run: ./gradlew :backend:copyBackendJar :backend:copyDockerfiles
         env:
           CI: ""
-      - name: Push to GitHub Packages
-        uses: docker/build-push-action@v2
+      - name: Build and push Docker image
+        uses: opspresso/action-docker@master
         with:
-          context: backend/build/docker
-          push: true
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          registry: docker.pkg.github.com
-          repository: ingo-fp-angel/merkliste_2.0/merkliste_20
-          tags: docker.pkg.github.com/ingo-fp-angel/merkliste_2.0/merkliste_20:${{ env.VERSION}}
+          args: --docker
+        env:
+          PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          REGISTRY: docker.pkg.github.com
+          BUILD_PATH: ${{github.workspace}}/backend/build/docker
+          REPOSITORY: ingo-fp-angel/merkliste_2.0
+          IMAGE_NAME: merkliste_20
+          TAG_NAME: ${{env.VERSION}}
