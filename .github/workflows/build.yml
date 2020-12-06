@@ -1,11 +1,11 @@
 name: Release
-
-on: [push]
-
+on:
+  push:
+    branches:
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - name: Set version
@@ -25,7 +25,7 @@ jobs:
         env:
           PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           REGISTRY: docker.pkg.github.com
-          DOCKERFILE: ${{github.workspace}}/backend/build/docker/Dockerfile
-          BUILD_PATH: ${{github.workspace}}/backend/build/docker
+          DOCKERFILE: ${{ github.workspace }}/backend/build/docker/Dockerfile
+          BUILD_PATH: ${{ github.workspace }}/backend/build/docker
           IMAGE_URI: docker.pkg.github.com/ingo-fp-angel/merkliste_2.0/merkliste_20
-          TAG_NAME: ${{env.VERSION}}
+          TAG_NAME: ${{ env.VERSION }}
