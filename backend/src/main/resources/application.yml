@@ -2,6 +2,10 @@ spring:
   application:
     name: Merkliste_2.0
 
+server:
+  error:
+    include-message: always
+
 logging:
   level:
     org.apache.http.wire: INFO

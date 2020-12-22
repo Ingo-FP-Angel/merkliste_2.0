@@ -85,7 +85,7 @@ class WebClient(merklisteProperties: MerklisteProperties) {
                         }
                     }
                 } catch (ex: ConnectException) {
-                    logger.error("Login failed", ex)
+                    logger.error("Login not possible", ex)
                     throw ResponseStatusException(HttpStatus.BAD_GATEWAY, "Login-Seite von buecherhalle.de nicht erreichbar: ${ex.message}")
                 }
             }
