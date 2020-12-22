@@ -28,6 +28,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.context.WebApplicationContext
 import org.springframework.web.server.ResponseStatusException
+import java.net.ConnectException
 
 @Component
 @Scope(value = WebApplicationContext.SCOPE_REQUEST,
@@ -83,6 +84,9 @@ class WebClient(merklisteProperties: MerklisteProperties) {
                             throw ResponseStatusException(HttpStatus.BAD_GATEWAY, "Login bei buecherhalle.de fehlgeschlagen: $reason")
                         }
                     }
+                } catch (ex: ConnectException) {
+                    logger.error("Login failed", ex)
+                    throw ResponseStatusException(HttpStatus.BAD_GATEWAY, "Login-Seite von buecherhalle.de nicht erreichbar: ${ex.message}")
                 }
             }
         }
