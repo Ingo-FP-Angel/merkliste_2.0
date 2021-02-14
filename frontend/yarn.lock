@@ -23,10 +23,17 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@babel/runtime@^7.1.2", "@babel/runtime@^7.2.0":
+"@babel/runtime@^7.1.2":
   version "7.12.5"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.5.tgz#410e7e487441e1b360c29be715d870d9b985882e"
   integrity sha512-plcc+hbExy3McchJCEQG3knOsuh3HH+Prx1P6cLIkET/0dLuQDEnrT+s27Axgc9bqfsmNUNHfscgMUdBpC9xfg==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
+"@babel/runtime@^7.12.5":
+  version "7.12.13"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.13.tgz#0a21452352b02542db0ffb928ac2d3ca7cb6d66d"
+  integrity sha512-8+3UMPBrjFa/6TtKi/7sehPKqfAm4g6K+YQjyyFOLUTxzOngcRZTlAVY8sc2CORJYqdHQY8gRPHmn+qo15rCBw==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -2916,7 +2923,12 @@ kotlin-compiler@^1.3.61:
   resolved "https://registry.yarnpkg.com/kotlin-compiler/-/kotlin-compiler-1.4.20.tgz#ff6e2a6be1f196f5047a97c3f9eeede485f2a5da"
   integrity sha512-w3f5I31LHE6rbxbLGC0kikxB6cfpMIXcsj+MK5oj+77Ud7W7Cw6dE9jvUM61CqZHmGbWYeD5U+nNfg/iFE7SKQ==
 
-kotlin@1.4.20, kotlin@^1.3.70:
+kotlin@1.4.30:
+  version "1.4.30"
+  resolved "https://registry.yarnpkg.com/kotlin/-/kotlin-1.4.30.tgz#53940ab0b49bf30d6b34c9f5b6d78059f944b251"
+  integrity sha512-7aGHeZvAYmKd2HGEosL0MYZDSoZywkynRExDAVmdh9vseAX3vooUoyolqQ9AXfTOkT3gzYJG3J0jNY7Ua7CsQQ==
+
+kotlin@^1.3.70:
   version "1.4.20"
   resolved "https://registry.yarnpkg.com/kotlin/-/kotlin-1.4.20.tgz#243dffa7d14585fe060ace1dd0ba63170de6c8fd"
   integrity sha512-aB2UYGwxph+8ILhoHNXzQHwgqwHAcPvPg6XTJ0q851zsPdyuGQjJPdTSwmPWN5RksgsW+olWg/Fi+psy/6Dmdg==
@@ -4148,12 +4160,12 @@ react@17.0.1:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
 
-reactstrap@8.7.1:
-  version "8.7.1"
-  resolved "https://registry.yarnpkg.com/reactstrap/-/reactstrap-8.7.1.tgz#9631db8460a83a4d40fbee61abdd577b4f1a7069"
-  integrity sha512-nZEUSxqqWJh0yGIvp4BgoHkXAcm2PqRLhpoOodMp5ce6njVpPd+GgUtbZscpu4jOi7GUFwpJ15tWZn59co4EQg==
+reactstrap@8.9.0:
+  version "8.9.0"
+  resolved "https://registry.yarnpkg.com/reactstrap/-/reactstrap-8.9.0.tgz#bca4afa3f5cd18899ef9b33d877a141886d5abae"
+  integrity sha512-pmf33YjpNZk1IfrjqpWCUMq9hk6GzSnMWBAofTBNIRJQB1zQ0Au2kzv3lPUAFsBYgWEuI9iYa/xKXHaboSiMkQ==
   dependencies:
-    "@babel/runtime" "^7.2.0"
+    "@babel/runtime" "^7.12.5"
     classnames "^2.2.3"
     prop-types "^15.5.8"
     react-popper "^1.3.6"
