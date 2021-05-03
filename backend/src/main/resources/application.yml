@@ -13,3 +13,4 @@ logging:
 
 merkliste:
   baseUrl: https://www.buecherhallen.de
+  #baseUrl: http://localhost:9090

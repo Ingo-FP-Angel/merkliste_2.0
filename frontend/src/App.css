@@ -1,0 +1,15 @@
+.MuiFormControl-root {
+    width: 300px;
+}
+
+p {
+    margin-bottom: 0.5rem;
+}
+
+p.available {
+    font-weight: bold;
+}
+
+p.unavailable {
+    font-style: italic;
+}

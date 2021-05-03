@@ -1,0 +1,144 @@
+{
+  "mappings" : [ {
+    "id" : "c57906b5-b702-4970-8b4a-e0cf76bc4a16",
+    "request" : {
+      "url" : "/suchergebnis-detail/medium/T008488736.html",
+      "method" : "GET"
+    },
+    "response" : {
+      "status" : 200,
+      "bodyFileName" : "HdR.html"
+    },
+    "uuid" : "c57906b5-b702-4970-8b4a-e0cf76bc4a16"
+  }, {
+    "id" : "da961e99-2879-4a47-85f1-b29516948023",
+    "request" : {
+      "url" : "/suchergebnis-detail/medium/T019497569.html",
+      "method" : "GET"
+    },
+    "response" : {
+      "status" : 200,
+      "bodyFileName" : "Potter.html"
+    },
+    "uuid" : "da961e99-2879-4a47-85f1-b29516948023"
+  }, {
+    "id" : "a3f5e38d-01ec-4f53-b50b-01d94db2a957",
+    "request" : {
+      "url" : "/suchergebnis-detail/medium/T018915385.html",
+      "method" : "GET"
+    },
+    "response" : {
+      "status" : 200,
+      "bodyFileName" : "Anhalter.html"
+    },
+    "uuid" : "a3f5e38d-01ec-4f53-b50b-01d94db2a957"
+  }, {
+    "id" : "6e886e44-7934-47c2-8434-16b82c4fa7d9",
+    "request" : {
+      "url" : "/merkliste.html",
+      "method" : "GET",
+      "cookies" : {
+        "PHPSESSID" : {
+          "matches" : "555537c3431cb512e70afd295d7fda1a"
+        }
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "bodyFileName" : "merkliste.html"
+    },
+    "uuid" : "6e886e44-7934-47c2-8434-16b82c4fa7d9"
+  }, {
+    "id" : "f3198cde-13d6-4cca-8bec-ab0bfd1f1ddc",
+    "request" : {
+      "url" : "/logout.html",
+      "method" : "GET"
+    },
+    "response" : {
+      "status" : 200,
+      "headers" : {
+        "Set-Cookie" : "PHPSESSID=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+      }
+    },
+    "uuid" : "f3198cde-13d6-4cca-8bec-ab0bfd1f1ddc"
+  }, {
+    "id" : "3dc6f381-b8ed-44a1-82dc-a8fd08c34b67",
+    "request" : {
+      "url" : "/login.html",
+      "method" : "GET",
+      "cookies" : {
+        "PHPSESSID" : {
+          "matches" : "555537c3431cb512e70afd295d7fda1a"
+        }
+      }
+    },
+    "response" : {
+      "status" : 400
+    },
+    "uuid" : "3dc6f381-b8ed-44a1-82dc-a8fd08c34b67"
+  }, {
+    "id" : "a63d3d51-3a51-4f23-a44b-119e41b7a9c8",
+    "request" : {
+      "url" : "/login.html",
+      "method" : "GET",
+      "cookies" : {
+        "PHPSESSID" : {
+          "matches" : "4af537c3431cb512e70afd295d7fda1a"
+        }
+      }
+    },
+    "response" : {
+      "status" : 200,
+      "bodyFileName" : "LoginFailedMaintenance.html"
+    },
+    "uuid" : "a63d3d51-3a51-4f23-a44b-119e41b7a9c8"
+  }, {
+    "id" : "4189f7da-9bf4-4843-96d5-db68bcb3b12b",
+    "request" : {
+      "url" : "/login.html",
+      "method" : "POST",
+      "bodyPatterns" : [ {
+        "doesNotMatch" : ".*username=foo&password=bar"
+      } ]
+    },
+    "response" : {
+      "status" : 303,
+      "headers" : {
+        "Location" : "http://localhost:32140/login.html",
+        "Set-Cookie" : "PHPSESSID=4af537c3431cb512e70afd295d7fda1a; path=/"
+      }
+    },
+    "uuid" : "4189f7da-9bf4-4843-96d5-db68bcb3b12b"
+  }, {
+    "id" : "3e30e6a1-de5f-46a9-9405-ae76bcdebdc6",
+    "request" : {
+      "url" : "/login.html",
+      "method" : "POST",
+      "bodyPatterns" : [ {
+        "matches" : ".*username=foo&password=bar"
+      } ]
+    },
+    "response" : {
+      "status" : 303,
+      "headers" : {
+        "Location" : "http://localhost:32140/merkliste.html",
+        "Set-Cookie" : "PHPSESSID=555537c3431cb512e70afd295d7fda1a; path=/"
+      }
+    },
+    "uuid" : "3e30e6a1-de5f-46a9-9405-ae76bcdebdc6"
+  }, {
+    "id" : "1a8a74fd-03ed-4fbf-8f0f-d7bfbb39c39d",
+    "request" : {
+      "url" : "/login.html",
+      "method" : "GET"
+    },
+    "response" : {
+      "status" : 200,
+      "bodyFileName" : "login.html"
+    },
+    "uuid" : "1a8a74fd-03ed-4fbf-8f0f-d7bfbb39c39d"
+  } ],
+  "meta" : {
+    "total" : 10
+  }
+}
