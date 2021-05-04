@@ -7,13 +7,15 @@ import {MediaList} from "./Components/MediaList";
 import {LocationSelect} from "./Components/LocationSelect";
 import {MediatypeSelect} from "./Components/MediatypeSelect";
 
+const localStorageDefaultLocation = "merkliste:defaultLocation"
+
 const App = () => {
     const [loading, setLoading] = useState({isLoading: false, errorMessage: ""});
     const [media, setMedia] = useState<Array<Media>>([]);
     const [formValues, setFormValues] = useState({
         user: "",
         pass: "",
-        location: "Zentralbibliothek",
+        location: localStorage.getItem(localStorageDefaultLocation) || "Zentralbibliothek",
         mediatype: "all",
     });
 
@@ -24,6 +26,7 @@ const App = () => {
         setFormValues({...formValues, pass: e.target.value});
     }
     const handleLocationChange = (location: string) => {
+        localStorage.setItem(localStorageDefaultLocation, location)
         setFormValues({...formValues, location: location});
     }
     const handleMediatypeChange = (mediatype: string) => {
