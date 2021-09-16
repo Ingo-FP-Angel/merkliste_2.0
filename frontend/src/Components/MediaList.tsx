@@ -32,6 +32,7 @@ export const MediaList = (props: { media: Array<Media>, isLoading: boolean }) =>
   } else {
     return (
         <>
+          <p>{props.media.filter(m => m.availability > 0).length} von {props.media.length}</p>
           <FormControlLabel
               control={
                 <Checkbox
@@ -42,7 +43,7 @@ export const MediaList = (props: { media: Array<Media>, isLoading: boolean }) =>
               }
               label="Nicht verfügbare Medien anzeigen"
           />
-          <ul>
+          <ol>
             {getMediaList(showUnavailable, props.media).map(item => (
                 <li>
                   <div>
@@ -62,7 +63,7 @@ export const MediaList = (props: { media: Array<Media>, isLoading: boolean }) =>
                   </div>
                 </li>
             ))}
-          </ul>
+          </ol>
         </>
     );
   }
