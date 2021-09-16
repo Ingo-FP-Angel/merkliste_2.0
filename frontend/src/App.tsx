@@ -40,8 +40,9 @@ const App = () => {
             setMedia(media);
             setLoading({isLoading: false, errorMessage: ""});
         } catch (e) {
-            console.log("Error in App: ", e.message);
-            setLoading({isLoading: false, errorMessage: e.message || "Fehler beim Abrufen"});
+            const message = (e as Error)?.message
+            console.log("Error in App: ", message);
+            setLoading({isLoading: false, errorMessage: message || "Fehler beim Abrufen"});
         }
     };
 
