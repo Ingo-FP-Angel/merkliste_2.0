@@ -14,10 +14,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Set up node 14
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
       - name: Build with Gradle and prepare Docker files
         run: ./gradlew :backend:copyBackendJar :backend:copyDockerfiles
         env:
