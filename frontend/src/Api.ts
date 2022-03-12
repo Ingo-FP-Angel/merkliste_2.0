@@ -3,7 +3,7 @@ import {Media} from "./Models/Media";
 
 export const fetchAvailableMedias = async (user: string, pass: string, location: string, mediatype: string): Promise<Array<Media>> => {
     try {
-        const backendBaseUrl = process.env.NODE_ENV == "production" ? "/api" : "http://localhost:8080/api";
+        const backendBaseUrl = process.env.NODE_ENV == "production" ? `${import.meta.env.BASE_URL}/api` : "http://localhost:8080/api";
 
         const response: AxiosResponse<Array<Media>> = await axios.get<Array<Media>>(
             `${backendBaseUrl}/media?location=${location}&mediatype=${mediatype}`,
