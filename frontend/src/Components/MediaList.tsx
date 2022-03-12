@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Media} from "../Models/Media";
-import {Checkbox, FormControlLabel} from "@material-ui/core";
+import {Checkbox, FormControlLabel} from "@mui/material";
 
 const getAvailabilityDisplay = (availability: number): string => {
   switch (availability) {
@@ -44,8 +44,8 @@ export const MediaList = (props: { media: Array<Media>, isLoading: boolean }) =>
               label="Nicht verfügbare Medien anzeigen"
           />
           <ol>
-            {getMediaList(showUnavailable, props.media).map(item => (
-                <li>
+            {getMediaList(showUnavailable, props.media).map((item, index) => (
+                <li key={index}>
                   <div>
                     <p className={item.availability > 0 ? "available" : "unavailable"}>
                       {item.name} {(item.author || "") === "" ? "" : " - " + item.author}
