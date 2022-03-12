@@ -1,10 +1,5 @@
 plugins {
-    id("com.moowork.node") version "1.3.1" apply true
-}
-
-node {
-    download = true
-    version = "14.17.6"
+    id("com.github.node-gradle.node") version "3.2.1" apply true
 }
 
 tasks {
