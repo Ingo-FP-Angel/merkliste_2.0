@@ -3,21 +3,15 @@ package de.theonebrack.merkliste_20
 import de.theonebrack.merkliste_20.Config.MerklisteProperties
 import de.theonebrack.merkliste_20.Models.LoginFormData
 import de.theonebrack.merkliste_20.Models.Media
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.apache.Apache
-import io.ktor.client.features.BrowserUserAgent
-import io.ktor.client.features.RedirectResponseException
-import io.ktor.client.features.cookies.AcceptAllCookiesStorage
-import io.ktor.client.features.cookies.HttpCookies
-import io.ktor.client.request.get
-import io.ktor.client.request.header
-import io.ktor.client.request.post
-import io.ktor.client.request.url
-import io.ktor.content.TextContent
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.features.*
+import io.ktor.client.features.cookies.*
+import io.ktor.client.request.*
+import io.ktor.content.*
 import io.ktor.http.ContentType
 import kotlinx.coroutines.runBlocking
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.jsoup.select.Selector
@@ -31,17 +25,17 @@ import org.springframework.web.server.ResponseStatusException
 import java.net.ConnectException
 
 @Component
-@Scope(value = WebApplicationContext.SCOPE_REQUEST,
-        proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Scope(
+    value = WebApplicationContext.SCOPE_REQUEST,
+    proxyMode = ScopedProxyMode.TARGET_CLASS
+)
 class WebClient(merklisteProperties: MerklisteProperties) {
     private val skipTypes = listOf("eAudio", "eBook", "eInfo", "eMusik", "eVideo")
     private val logger = LoggerFactory.getLogger(javaClass)
     private val baseUrl: String = merklisteProperties.baseUrl
-    private val client: HttpClient = HttpClient(Apache) {
+    private val client: HttpClient = HttpClient(CIO) {
         engine {
-            followRedirects = false
-            socketTimeout = 30_000
-            connectTimeout = 10_000
+            requestTimeout = 30_000
         }
         install(HttpCookies) {
             storage = AcceptAllCookiesStorage()
@@ -55,13 +49,24 @@ class WebClient(merklisteProperties: MerklisteProperties) {
             val loginPage = client.get<String>("$baseUrl/login.html")
 
             Jsoup.parse(loginPage).run {
-                val loginForm: Element = selectFirst("#tl_login")
+                val loginForm: Element = selectFirst("#tl_login") ?: throw ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Login-Seite von buecherhalle.de enthält nicht das erwartete Formular."
+                )
 
                 val loginData = LoginFormData(
-                        loginForm.getElementsByAttributeValue("name", "FORM_SUBMIT").first().attr("value"),
-                        loginForm.getElementsByAttributeValue("name", "REQUEST_TOKEN").first().attr("value"),
-                        username,
-                        password
+                    loginForm.getElementsByAttributeValue("name", "FORM_SUBMIT").first()?.attr("value")
+                        ?: throw ResponseStatusException(
+                            HttpStatus.INTERNAL_SERVER_ERROR,
+                            "Login-Seite von buecherhalle.de enthält nicht die erwarteten Formular-Attribute."
+                        ),
+                    loginForm.getElementsByAttributeValue("name", "REQUEST_TOKEN").first()?.attr("value")
+                        ?: throw ResponseStatusException(
+                            HttpStatus.INTERNAL_SERVER_ERROR,
+                            "Login-Seite von buecherhalle.de enthält nicht die erwarteten Formular-Attribute."
+                        ),
+                    username,
+                    password
                 )
 
                 logger.info("Post login form")
@@ -78,15 +83,24 @@ class WebClient(merklisteProperties: MerklisteProperties) {
                     if (response.headers["Location"] == "$baseUrl/login.html") {
                         val loginPageWithReason = client.get<String>("$baseUrl/login.html")
                         Jsoup.parse(loginPageWithReason).run {
-                            val form: Element = selectFirst("#tl_login")
-                            val reason = form.getElementsByClass("error").first().text()
+                            val form: Element = selectFirst("#tl_login") ?: throw ResponseStatusException(
+                                HttpStatus.INTERNAL_SERVER_ERROR,
+                                "Login-Seite von buecherhalle.de enthält nicht das erwartete Formular."
+                            )
+                            val reason = form.getElementsByClass("error").first()?.text() ?: "unknown error"
                             logger.error("Login failed: $reason")
-                            throw ResponseStatusException(HttpStatus.BAD_GATEWAY, "Login bei buecherhalle.de fehlgeschlagen: $reason")
+                            throw ResponseStatusException(
+                                HttpStatus.BAD_GATEWAY,
+                                "Login bei buecherhalle.de fehlgeschlagen: $reason"
+                            )
                         }
                     }
                 } catch (ex: ConnectException) {
                     logger.error("Login not possible", ex)
-                    throw ResponseStatusException(HttpStatus.BAD_GATEWAY, "Login-Seite von buecherhalle.de nicht erreichbar: ${ex.message}")
+                    throw ResponseStatusException(
+                        HttpStatus.BAD_GATEWAY,
+                        "Login-Seite von buecherhalle.de nicht erreichbar: ${ex.message}"
+                    )
                 }
             }
         }
@@ -101,16 +115,19 @@ class WebClient(merklisteProperties: MerklisteProperties) {
             Jsoup.parse(merkliste).run {
                 val list = selectFirst(".search-results-list")
 
-                result = list.select("div.search-results-text").map {
-                    Media(
+                result = list?.select("div.search-results-text")
+                    ?.map {
+                        Media(
                             name = it.select("h2>a").text(),
                             author = it.select(".search-results-details-personen>a").text(),
                             type = it.select(".search-results-media-type-text").text(),
                             signature = it.select(".search-results-details-signatur").text(),
                             url = it.select("h2>a").attr("href"),
                             availability = -1
-                    )
-                }.filter { !skipTypes.contains(it.type) }
+                        )
+                    }
+                    ?.filter { !skipTypes.contains(it.type) }
+                    ?: emptyList()
             }
         }
         logger.info("Found ${result.size} entries")
@@ -125,7 +142,7 @@ class WebClient(merklisteProperties: MerklisteProperties) {
             val detailsPage = client.get<String>("$baseUrl/$url")
 
             Jsoup.parse(detailsPage).run {
-                val availabilityErrorMessage =  select(".availability-message")
+                val availabilityErrorMessage = select(".availability-message")
                 if (availabilityErrorMessagePresent(availabilityErrorMessage)) {
                     result = -2
                 }
@@ -162,7 +179,7 @@ class WebClient(merklisteProperties: MerklisteProperties) {
     }
 
     private fun availabilityErrorMessagePresent(availabilityErrorMessage: Elements?): Boolean {
-        if ((availabilityErrorMessage?.size ?: 0) == 0 ) {
+        if ((availabilityErrorMessage?.size ?: 0) == 0) {
             return false
         }
 
@@ -171,20 +188,16 @@ class WebClient(merklisteProperties: MerklisteProperties) {
         return true
     }
 
-    private fun Document.getAvailabilityForLocation(availabilityPerLocationList: Elements, location: String): Int {
+    private fun getAvailabilityForLocation(availabilityPerLocationList: Elements, location: String): Int {
         var result = -1
         for (entry in availabilityPerLocationList) {
-            val locationOfAvailability = Selector.selectFirst(".medium-availability-item-title-location", entry).text()
+            val locationOfAvailability = Selector.selectFirst(".medium-availability-item-title-location", entry)?.text()
             if (locationOfAvailability == location) {
-                val availabilityString = Selector.selectFirst(".medium-availability-item-title-count", entry).text()
+                val availabilityString = Selector.selectFirst(".medium-availability-item-title-count", entry)?.text() ?: "-2/-2" // treat null like no info available
                 result = availabilityString.split("/")[0].toInt()
                 break
             }
         }
         return result
-    }
-
-    fun close() {
-        client.close()
     }
 }
