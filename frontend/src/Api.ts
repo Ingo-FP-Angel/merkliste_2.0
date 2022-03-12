@@ -1,10 +1,12 @@
-import axios, {AxiosError, AxiosResponse} from "axios";
+import axios, {AxiosResponse} from "axios";
 import {Media} from "./Models/Media";
 
 export const fetchAvailableMedias = async (user: string, pass: string, location: string, mediatype: string): Promise<Array<Media>> => {
     try {
+        const backendBaseUrl = process.env.NODE_ENV == "production" ? "/api" : "http://localhost:8080/api";
+
         const response: AxiosResponse<Array<Media>> = await axios.get<Array<Media>>(
-            `http://localhost:8080/api/media?location=${location}&mediatype=${mediatype}`,
+            `${backendBaseUrl}/media?location=${location}&mediatype=${mediatype}`,
             {
                 headers: {
                     username: user,
