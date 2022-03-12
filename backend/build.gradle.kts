@@ -2,16 +2,16 @@ import java.nio.charset.StandardCharsets
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val kotlin_version = "1.4.20"
-val ktor_version = "1.4.3"
+val kotlin_version = "1.6.10"
+val ktor_version = "1.6.7"
 
 plugins {
 	id("idea")
 	id("java")
-	id("org.springframework.boot") version "2.3.6.RELEASE"
-	id("io.spring.dependency-management") version "1.0.10.RELEASE"
-	kotlin("jvm") version "1.4.20"
-	kotlin("plugin.spring") version "1.4.20"
+	id("org.springframework.boot") version "2.6.4"
+	id("io.spring.dependency-management") version "1.0.11.RELEASE"
+	kotlin("jvm") version "1.6.10"
+	kotlin("plugin.spring") version "1.6.10"
 }
 
 val appName = "merkliste_20"
@@ -28,15 +28,15 @@ dependencies {
 	implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin")
 	implementation(group = "org.jetbrains.kotlin", name = "kotlin-reflect", version = kotlin_version)
 	implementation(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version = kotlin_version)
-	implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.4.2")
+	implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.6.0")
 	implementation(group = "io.ktor", name = "ktor-client-core", version = ktor_version)
-	implementation(group = "io.ktor", name = "ktor-client-apache", version = ktor_version)
-	implementation(group = "org.jsoup", name = "jsoup", version = "1.13.1")
+	implementation(group = "io.ktor", name = "ktor-client-cio", version = ktor_version)
+	implementation(group = "org.jsoup", name = "jsoup", version = "1.14.3")
 
-	testImplementation(group ="com.github.tomakehurst", name = "wiremock-jre8", version = "2.27.2")
+	testImplementation(group ="com.github.tomakehurst", name = "wiremock-jre8", version = "2.32.0")
 	testImplementation(group = "org.assertj", name = "assertj-core")
 	testImplementation(group ="org.springframework.boot", name = "spring-boot-starter-test")
-	testImplementation(group ="com.nhaarman.mockitokotlin2", name = "mockito-kotlin", version = "2.2.0")
+	testImplementation(group ="org.mockito.kotlin", name = "mockito-kotlin", version = "4.0.0")
 }
 
 tasks.withType<Test> {

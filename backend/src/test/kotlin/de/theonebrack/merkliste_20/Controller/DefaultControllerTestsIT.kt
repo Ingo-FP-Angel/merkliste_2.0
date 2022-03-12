@@ -104,7 +104,7 @@ class DefaultControllerTestsIT {
                 header("password", "bar")
             }
         }.andExpect {
-            status { isOk }
+            status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
             content { json("[{\"name\":\"Per Anhalter durch die Galaxis / 4. Band Macht`s gut und danke für den Fisch\",\"author\":\"Adams, Douglas\",\"type\":\"Buch\",\"signature\":\"Signatur: 1 @ADAM Doug Science-Fiction\",\"url\":\"suchergebnis-detail/medium/T018915385.html\",\"availability\":1},{\"name\":\"Harry Potter\",\"author\":\"\",\"type\":\"Buch\",\"signature\":\"Signatur: Qak 5 ROWL HARR\",\"url\":\"suchergebnis-detail/medium/T019497569.html\",\"availability\":0},{\"name\":\"Der Herr der Ringe / Bd. 1. Die Gefährten\",\"author\":\"Tolkien, J. R. R.\",\"type\":\"Buch\",\"signature\":\"Signatur: 1 @TOLK John Fantasy\",\"url\":\"suchergebnis-detail/medium/T008488736.html\",\"availability\":-1}]") }
         }
@@ -119,7 +119,7 @@ class DefaultControllerTestsIT {
                 header("password", "baz")
             }
         }.andExpect {
-            status { is5xxServerError }
+            status { is5xxServerError() }
         }.andReturn()
 
         val exception = result.resolvedException!! as ResponseStatusException
@@ -142,7 +142,7 @@ class DefaultControllerTestsIT {
                             header("password", "bar")
                         }
                     }.andExpect {
-                        status { isOk }
+                        status { isOk() }
                         content { contentType(MediaType.APPLICATION_JSON) }
                         content { json("[{\"name\":\"Per Anhalter durch die Galaxis / 4. Band Macht`s gut und danke für den Fisch\",\"author\":\"Adams, Douglas\",\"type\":\"Buch\",\"signature\":\"Signatur: 1 @ADAM Doug Science-Fiction\",\"url\":\"suchergebnis-detail/medium/T018915385.html\",\"availability\":1},{\"name\":\"Harry Potter\",\"author\":\"\",\"type\":\"Buch\",\"signature\":\"Signatur: Qak 5 ROWL HARR\",\"url\":\"suchergebnis-detail/medium/T019497569.html\",\"availability\":0},{\"name\":\"Der Herr der Ringe / Bd. 1. Die Gefährten\",\"author\":\"Tolkien, J. R. R.\",\"type\":\"Buch\",\"signature\":\"Signatur: 1 @TOLK John Fantasy\",\"url\":\"suchergebnis-detail/medium/T008488736.html\",\"availability\":-1}]") }
                     }
