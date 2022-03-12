@@ -31,6 +31,7 @@ import java.net.ConnectException
 )
 class WebClient(merklisteProperties: MerklisteProperties) {
     private val skipTypes = listOf("eAudio", "eBook", "eInfo", "eMusik", "eVideo")
+    private val signaturRegex = Regex(".* (Signatur: .*) Medienart.*")
     private val logger = LoggerFactory.getLogger(javaClass)
     private val baseUrl: String = merklisteProperties.baseUrl
     private val client: HttpClient = HttpClient(CIO) {
@@ -119,9 +120,9 @@ class WebClient(merklisteProperties: MerklisteProperties) {
                     ?.map {
                         Media(
                             name = it.select("h2>a").text(),
-                            author = it.select(".search-results-details-personen>a").text(),
+                            author = it.select(".search-results-details .search-results-details-personen a").text(),
                             type = it.select(".search-results-media-type-text").text(),
-                            signature = it.select(".search-results-details-signatur").text(),
+                            signature = getSignaturFromAllDetails(it.select(".search-results-details").text()),
                             url = it.select("h2>a").attr("href"),
                             availability = -1
                         )
@@ -193,11 +194,17 @@ class WebClient(merklisteProperties: MerklisteProperties) {
         for (entry in availabilityPerLocationList) {
             val locationOfAvailability = Selector.selectFirst(".medium-availability-item-title-location", entry)?.text()
             if (locationOfAvailability == location) {
-                val availabilityString = Selector.selectFirst(".medium-availability-item-title-count", entry)?.text() ?: "-2/-2" // treat null like no info available
+                val availabilityString = Selector.selectFirst(".medium-availability-item-title-count", entry)?.text()
+                    ?: "-2/-2" // treat null like no info available
                 result = availabilityString.split("/")[0].toInt()
                 break
             }
         }
         return result
+    }
+
+    private fun getSignaturFromAllDetails(details: String): String {
+        val match = signaturRegex.find(details)
+        return match?.destructured?.component1() ?: ""
     }
 }

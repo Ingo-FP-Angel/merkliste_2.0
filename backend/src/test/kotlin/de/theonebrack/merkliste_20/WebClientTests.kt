@@ -4,8 +4,11 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import de.theonebrack.merkliste_20.Config.MerklisteProperties
 import de.theonebrack.merkliste_20.Models.Media
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 
@@ -71,9 +74,9 @@ class WebClientTests {
     @Test
     fun whenGettingMerkliste_ParseCorrectInfo() {
         val expectedEntries: List<Media> = listOf(
-                Media("Per Anhalter durch die Galaxis / 4. Band Macht`s gut und danke für den Fisch", "Adams, Douglas", "Buch", "Signatur: 1 @ADAM Doug Science-Fiction", "suchergebnis-detail/medium/T018915385.html", -1),
+                Media("Per Anhalter durch die Galaxis / 4. Band Macht`s gut und danke für den Fisch", "Adams, Douglas", "Buch", "Signatur: ADAM Doug Science-Fiction", "suchergebnis-detail/medium/T018915385.html", -1),
                 Media("Harry Potter", "", "Buch", "Signatur: Qak 5 ROWL HARR", "suchergebnis-detail/medium/T019497569.html", -1),
-                Media("Der Herr der Ringe / Bd. 1. Die Gefährten", "Tolkien, J. R. R.", "Buch", "Signatur: 1 @TOLK John Fantasy", "suchergebnis-detail/medium/T008488736.html", -1)
+                Media("Der Herr der Ringe / Bd. 1. Die Gefährten", "Tolkien, J. R. R.", "Buch", "Signatur: TOLK John Fantasy", "suchergebnis-detail/medium/T008488736.html", -1)
         )
 
         val cut = WebClient(props)
