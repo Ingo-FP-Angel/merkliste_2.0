@@ -4,9 +4,10 @@ import de.theonebrack.merkliste_20.Config.MerklisteProperties
 import de.theonebrack.merkliste_20.Models.LoginFormData
 import de.theonebrack.merkliste_20.Models.Media
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.features.*
-import io.ktor.client.features.cookies.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.cookies.*
 import io.ktor.client.request.*
 import io.ktor.content.*
 import io.ktor.http.ContentType
@@ -47,7 +48,7 @@ class WebClient(merklisteProperties: MerklisteProperties) {
     fun login(username: String, password: String) {
         runBlocking {
             logger.info("Get login page")
-            val loginPage = client.get<String>("$baseUrl/login.html")
+            val loginPage = client.get("$baseUrl/login.html").body<String>()
 
             Jsoup.parse(loginPage).run {
                 val loginForm: Element = selectFirst("#tl_login") ?: throw ResponseStatusException(
@@ -72,17 +73,17 @@ class WebClient(merklisteProperties: MerklisteProperties) {
 
                 logger.info("Post login form")
                 try {
-                    val loginResult = client.post<String> {
+                    val loginResult = client.post {
                         url("$baseUrl/login.html")
                         header("Referer", "$baseUrl/login.html")
-                        body = TextContent(loginData.toString(), contentType = ContentType.Application.FormUrlEncoded)
+                        setBody(TextContent(loginData.toString(), contentType = ContentType.Application.FormUrlEncoded))
                     }
                     logger.debug("Login result")
-                    logger.debug(loginResult)
+                    logger.debug(loginResult.body<String>())
                 } catch (ex: RedirectResponseException) {
                     val response = ex.response
                     if (response.headers["Location"] == "$baseUrl/login.html") {
-                        val loginPageWithReason = client.get<String>("$baseUrl/login.html")
+                        val loginPageWithReason = client.get("$baseUrl/login.html").body<String>()
                         Jsoup.parse(loginPageWithReason).run {
                             val form: Element = selectFirst("#tl_login") ?: throw ResponseStatusException(
                                 HttpStatus.INTERNAL_SERVER_ERROR,
@@ -111,7 +112,7 @@ class WebClient(merklisteProperties: MerklisteProperties) {
         lateinit var result: List<Media>
         runBlocking {
             logger.info("Fetching merkliste.html")
-            val merkliste = client.get<String>("$baseUrl/merkliste.html")
+            val merkliste = client.get("$baseUrl/merkliste.html").body<String>()
 
             Jsoup.parse(merkliste).run {
                 val list = selectFirst(".search-results-list")
@@ -140,7 +141,7 @@ class WebClient(merklisteProperties: MerklisteProperties) {
         runBlocking {
             logger.info("Fetching $url")
 
-            val detailsPage = client.get<String>("$baseUrl/$url")
+            val detailsPage = client.get("$baseUrl/$url").body<String>()
 
             Jsoup.parse(detailsPage).run {
                 val availabilityErrorMessage = select(".availability-message")
@@ -167,7 +168,7 @@ class WebClient(merklisteProperties: MerklisteProperties) {
             logger.info("Logout")
 
             try {
-                client.get<String>("$baseUrl/logout.html")
+                client.get("$baseUrl/logout.html")
             } catch (ex: RedirectResponseException) {
                 val response = ex.response
                 if (response.headers["Location"] != "$baseUrl/login.html") {

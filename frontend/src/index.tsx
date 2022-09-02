@@ -1,16 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {createTheme, StyledEngineProvider, Theme, ThemeProvider} from '@mui/material/styles';
-import 'fontsource-roboto';
+import {createTheme, StyledEngineProvider, ThemeProvider} from '@mui/material/styles';
+import '@fontsource/roboto';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
-declare module '@mui/styles/defaultTheme' {
-    // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface DefaultTheme extends Theme {
-    }
-}
 
 const theme = createTheme({
     components: {

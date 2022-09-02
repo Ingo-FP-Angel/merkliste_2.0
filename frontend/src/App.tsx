@@ -1,23 +1,22 @@
 import React, {useState} from 'react';
-import {Box, Button, LinearProgress, TextField} from "@mui/material";
+import {Box, Button, LinearProgress, TextField, useTheme} from "@mui/material";
 import './App.css';
 import {Media} from "./Models/Media";
 import {fetchAvailableMedias} from "./Api";
 import {MediaList} from "./Components/MediaList";
 import {LocationSelect} from "./Components/LocationSelect";
 import {MediatypeSelect} from "./Components/MediatypeSelect";
-import {makeStyles} from "@mui/styles";
-
-const useStyles = makeStyles(theme => ({
-    form: {
-        marginTop: theme.spacing(2)
-    },
-}));
 
 const localStorageDefaultLocation = "merkliste:defaultLocation"
 
 const App = () => {
-    const classes = useStyles();
+    const theme = useTheme()
+    const classes = {
+        form: {
+            marginTop: theme.spacing(2)
+        },
+    };
+
     const [loading, setLoading] = useState({isLoading: false, errorMessage: ""});
     const [media, setMedia] = useState<Array<Media>>([]);
     const [formValues, setFormValues] = useState({
@@ -64,9 +63,9 @@ const App = () => {
                                value={formValues.user} onChange={handleUserChange}/>
                     <TextField required label="Passwort" type="password"
                                value={formValues.pass} onChange={handlePassChange}/>
-                    <LocationSelect className={classes.form}
+                    <LocationSelect sx={classes.form}
                                     location={formValues.location} onSelect={handleLocationChange}/>
-                    <MediatypeSelect className={classes.form}
+                    <MediatypeSelect sx={classes.form}
                                      mediatype={formValues.mediatype} onSelect={handleMediatypeChange}/>
                 </Box>
                 <Button variant="outlined" color="primary"

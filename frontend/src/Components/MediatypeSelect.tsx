@@ -1,5 +1,6 @@
 import React from "react";
 import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
+import {SxProps} from "@mui/system";
 
 const mediatypes: Map<string, string> = new Map([["Alle", "all"], ["Bücher", "books"], ["Filme/Serien", "movies"], ["Musik", "music"]]);
 
@@ -11,10 +12,10 @@ const generateItems = (entries: Map<string, string>): Array<React.ReactNode> => 
     return items;
 }
 
-export const MediatypeSelect = (props: { mediatype: string, onSelect: (value: string) => void, className?: string }) => {
+export const MediatypeSelect = (props: { mediatype: string, onSelect: (value: string) => void, sx?: SxProps }) => {
 
     return (
-        <FormControl className={props.className}>
+        <FormControl sx={props.sx}>
             <InputLabel>Medienart:</InputLabel>
             <Select
                 value={props.mediatype}

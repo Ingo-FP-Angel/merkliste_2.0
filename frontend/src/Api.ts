@@ -1,4 +1,4 @@
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import {Media} from "./Models/Media";
 
 export const fetchAvailableMedias = async (user: string, pass: string, location: string, mediatype: string): Promise<Array<Media>> => {
@@ -13,8 +13,9 @@ export const fetchAvailableMedias = async (user: string, pass: string, location:
             }
         );
         return response.data;
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
+    } catch (err) {
+        if (axios.isAxiosError(err)) {
+            const error = err as AxiosError<{ error: string, message?: string }>
             if (error.response) {
                 // The request was made and the server responded with a status code
                 // that falls out of the range of 2xx
