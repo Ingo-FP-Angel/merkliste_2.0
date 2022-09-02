@@ -1,17 +1,17 @@
-import java.nio.charset.StandardCharsets
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.nio.charset.StandardCharsets
 
-val kotlin_version = "1.6.10"
-val ktor_version = "1.6.7"
+val kotlin_version = "1.7.10"
+val ktor_version = "2.1.0"
 
 plugins {
 	id("idea")
 	id("java")
-	id("org.springframework.boot") version "2.6.4"
-	id("io.spring.dependency-management") version "1.0.11.RELEASE"
-	kotlin("jvm") version "1.6.10"
-	kotlin("plugin.spring") version "1.6.10"
+	id("org.springframework.boot") version "2.7.3"
+	id("io.spring.dependency-management") version "1.0.13.RELEASE"
+	kotlin("jvm") version "1.7.10"
+	kotlin("plugin.spring") version "1.7.10"
 }
 
 val appName = "merkliste_20"
@@ -28,12 +28,12 @@ dependencies {
 	implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin")
 	implementation(group = "org.jetbrains.kotlin", name = "kotlin-reflect", version = kotlin_version)
 	implementation(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version = kotlin_version)
-	implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.6.0")
+	implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.6.4")
 	implementation(group = "io.ktor", name = "ktor-client-core", version = ktor_version)
 	implementation(group = "io.ktor", name = "ktor-client-cio", version = ktor_version)
-	implementation(group = "org.jsoup", name = "jsoup", version = "1.14.3")
+	implementation(group = "org.jsoup", name = "jsoup", version = "1.15.3")
 
-	testImplementation(group ="com.github.tomakehurst", name = "wiremock-jre8", version = "2.32.0")
+	testImplementation(group ="com.github.tomakehurst", name = "wiremock-jre8", version = "2.33.2")
 	testImplementation(group = "org.assertj", name = "assertj-core")
 	testImplementation(group ="org.springframework.boot", name = "spring-boot-starter-test")
 	testImplementation(group ="org.mockito.kotlin", name = "mockito-kotlin", version = "4.0.0")

@@ -1,5 +1,9 @@
 plugins {
-    id("com.github.node-gradle.node") version "3.2.1" apply true
+    id("com.github.node-gradle.node") version "3.4.0"
+}
+
+node {
+    download.set(true)
 }
 
 tasks {
