@@ -36,6 +36,7 @@ class WebClient(merklisteProperties: MerklisteProperties) {
     private val logger = LoggerFactory.getLogger(javaClass)
     private val baseUrl: String = merklisteProperties.baseUrl
     private val client: HttpClient = HttpClient(CIO) {
+        expectSuccess = true
         engine {
             requestTimeout = 30_000
         }
