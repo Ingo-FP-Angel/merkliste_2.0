@@ -2,16 +2,16 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.nio.charset.StandardCharsets
 
-val kotlinVersion = "1.9.20"
-val ktorVersion = "2.1.0"
+val kotlinVersion = "2.0.0"
+val ktorVersion = "2.1.3"
 
 plugins {
 	id("idea")
 	id("java")
-	id("org.springframework.boot") version "2.7.17"
-	id("io.spring.dependency-management") version "1.1.3"
-	kotlin("jvm") version "1.9.20"
-	kotlin("plugin.spring") version "1.9.20"
+	id("org.springframework.boot") version "2.7.18"
+	id("io.spring.dependency-management") version "1.1.5"
+	kotlin("jvm") version "2.0.0"
+	kotlin("plugin.spring") version "2.0.0"
 }
 
 val appName = "merkliste_20"
@@ -29,15 +29,15 @@ dependencies {
 	implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin")
 	implementation(group = "org.jetbrains.kotlin", name = "kotlin-reflect", version = kotlinVersion)
 	implementation(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version = kotlinVersion)
-	implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.7.3")
+	implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.8.1")
 	implementation(group = "io.ktor", name = "ktor-client-core", version = ktorVersion)
 	implementation(group = "io.ktor", name = "ktor-client-cio", version = ktorVersion)
-	implementation(group = "org.jsoup", name = "jsoup", version = "1.16.2")
+	implementation(group = "org.jsoup", name = "jsoup", version = "1.17.2")
 
-	testImplementation(group ="org.wiremock", name = "wiremock-standalone", version = "3.3.1")
+	testImplementation(group = "org.wiremock", name = "wiremock-standalone", version = "3.5.4")
 	testImplementation(group = "org.assertj", name = "assertj-core")
-	testImplementation(group ="org.springframework.boot", name = "spring-boot-starter-test")
-	testImplementation(group ="org.mockito.kotlin", name = "mockito-kotlin", version = "5.1.0")
+	testImplementation(group = "org.springframework.boot", name = "spring-boot-starter-test")
+	testImplementation(group = "org.mockito.kotlin", name = "mockito-kotlin", version = "5.3.1")
 }
 
 tasks.withType<Test> {
