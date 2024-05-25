@@ -17,7 +17,8 @@ plugins {
 val appName = "merkliste_20"
 group = "de.the-one-brack.$appName"
 version = File("${project.projectDir}/..", "version").readText(StandardCharsets.UTF_8).trim()
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_17
+java.targetCompatibility = JavaVersion.VERSION_17
 
 repositories {
 	mavenCentral()
