@@ -1,6 +1,5 @@
 import React from "react";
-import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
-import {SxProps} from "@mui/system";
+import {FormControl, InputLabel, MenuItem, Select, SxProps} from "@mui/material";
 
 const locations: Array<string> = ["Zentralbibliothek", "Alstertal", "Altona", "Barmbek", "Bergedorf", "Billstedt", "Bramfeld", "Dehnhaide", "Eidelstedt", "Eimsbüttel", "Elbvororte", "Farmsen", "Finkenwerder", "Fuhlsbüttel", "Harburg", "Hohenhorst", "Holstenstraße", "Horn", "Kirchdorf", "Langenhorn", "Lokstedt", "Mümmelmannsberg", "Neuallermöhe", "Neugraben", "Niendorf", "Osdorfer Born", "Rahlstedt", "Schnelsen", "Steilshoop", "Volksdorf", "Wandsbek", "Wilhelmsburg", "Winterhude"];
 

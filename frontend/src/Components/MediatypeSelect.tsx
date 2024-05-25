@@ -1,6 +1,5 @@
 import React from "react";
-import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
-import {SxProps} from "@mui/system";
+import {FormControl, InputLabel, MenuItem, Select, SxProps} from "@mui/material";
 
 const mediatypes: Map<string, string> = new Map([["Alle", "all"], ["Bücher", "books"], ["Filme/Serien", "movies"], ["Musik", "music"]]);
 
