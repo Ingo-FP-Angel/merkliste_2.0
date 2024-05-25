@@ -4,8 +4,9 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import de.theonebrack.merkliste_20.Config.MerklisteProperties
 import de.theonebrack.merkliste_20.Models.Media
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -65,10 +66,9 @@ class WebClientTests {
 
         val cut = WebClient(props)
 
-        val ex = assertThrows(ResponseStatusException::class.java) {
-            cut.login("user", "pass")
-        }
-        assertTrue(ex.message.contains("Anmeldung nicht möglich! Der Authentifizierungsdienst steht zur Zeit nicht zur Verfügung."))
+        assertThatThrownBy { cut.login("user", "pass") }
+            .isInstanceOf(ResponseStatusException::class.java)
+            .hasMessageContaining("Anmeldung nicht möglich! Der Authentifizierungsdienst steht zur Zeit nicht zur Verfügung.")
     }
 
     @Test
@@ -82,7 +82,8 @@ class WebClientTests {
         val cut = WebClient(props)
         val allEntries: List<Media> = cut.getAllMedias()
 
-        assertIterableEquals(expectedEntries, allEntries)
+        assertThat(allEntries)
+            .hasSameElementsAs(expectedEntries)
     }
 
     @Test
@@ -90,7 +91,8 @@ class WebClientTests {
         val cut = WebClient(props)
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T018915385.html")
 
-        assertEquals(1, availability)
+        assertThat(availability)
+            .isEqualTo(1)
     }
 
     @Test
@@ -98,7 +100,8 @@ class WebClientTests {
         val cut = WebClient(props)
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T019497569.html")
 
-        assertEquals(0, availability)
+        assertThat(availability)
+            .isEqualTo(0)
     }
 
     @Test
@@ -106,7 +109,8 @@ class WebClientTests {
         val cut = WebClient(props)
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T008488736.html")
 
-        assertEquals(-1, availability)
+        assertThat(availability)
+            .isEqualTo(-1)
     }
 
 
@@ -116,7 +120,8 @@ class WebClientTests {
 
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/AvailabilityInfoUnavailable.html")
 
-        assertEquals(-2, availability)
+        assertThat(availability)
+            .isEqualTo(-2)
     }
 
 
@@ -125,7 +130,8 @@ class WebClientTests {
         val cut = WebClient(props)
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T018915385.html")
 
-        assertEquals(1, availability)
+        assertThat(availability)
+            .isEqualTo(1)
     }
 
     @Test
@@ -133,6 +139,7 @@ class WebClientTests {
         val cut = WebClient(props)
         val availability: Int = cut.getMediaDetails("suchergebnis-detail/medium/T018915385.html", "Niendorf")
 
-        assertEquals(0, availability)
+        assertThat(availability)
+            .isEqualTo(0)
     }
 }
