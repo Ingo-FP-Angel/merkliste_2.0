@@ -1,3 +1,10 @@
+# Repo archiviert
+
+Seit dem Relaunch der Bücherhallen-Webseite 2025 funktioniert diese App nicht mehr.
+Insbesondere gibt es jetzt ein Captcha gegen Bots.
+Dagegen möchte ich nicht anprogrammieren und versetze das Repo in den Ruhestand.
+Stattdessen verwende ich jetzt ein User-Script im Browser mit reduzierter Funktionalität.
+
 # Merkliste 2.0
 
 Diese App zeigt alle aktuell verfügbaren Medien, die man auf seiner Merkliste bei den Hamburger Bücherhallen hat.
